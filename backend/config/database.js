@@ -39,12 +39,14 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
 /* Funcion para probar la conexion a la base de datos */
 const testConnection = async () => {
     try {
-        //intentar autenticar la conexion con la base de datos
-        await sequelize.authenticate(); //si la conexion es exitosa, se resuelve la promesa
-        console.log('Conexion a la base de datos exitosa');
-        return true; //retorna true si la conexion es exitosa
+        //intentar autenticar con al base de datos 
+        await sequelize.authenticate(); //si la autenticacion es exitosa, se muestra un mensaje de exito
+        console.log('Conexion a MYSQL establecida exitosamente');
+        return true;
     } catch (error) {
-        console.error('X error al conectar con MYSQL', error);
-        return false; //retorna false si hay un error al conectar
+        console.error('X error al concetar a MYSQL:',
+        error.message);
+        console.error('XVERIFICA QUE xampp este corriendo y las credenciales .env sean correctas:');
+        return false;
     }
-
+}
