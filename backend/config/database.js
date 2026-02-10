@@ -41,10 +41,47 @@ const testConnection = async () => {
     try {
         //intentar autenticar la conexion con la base de datos
         await sequelize.authenticate(); //si la conexion es exitosa, se resuelve la promesa
-        console.log('Conexion a la base de datos exitosa');
+        console.log('Conexion a MYSQL establecida exitosamente');
         return true; //retorna true si la conexion es exitosa
     } catch (error) {
-        console.error('X error al conectar con MYSQL', error);
-        return false; //retorna false si hay un error al conectar
+        console.error('X error al conectar con MYSQL',
+        error.message);
+        console.error('X verifica que XAMPP esta corriendo y las credenciales en .env sean correctas');
+        return false; //retorna false si la conexion falla
+    }
+}
+
+/**Funcion para sincronizar los modelos con la base de datos
+ * esta funcion creara las tablas automaticamente basandose en los modelos
+ */
+/*
+* @param {bolean} force - si es true, elimina y recerea todas las tablas
+* @param {bolean} - si es true, modifica las tablas existentes para que coincidan con los modelos
+*/
+
+const syncDataBase = async (force = false, alter = false) => {
+    try {
+        //sincronizar todos los modelos con la base de datos
+        await sequelize.sync({ force, alter });
+
+        if (force) {
+            console.log('Base de datos sincronizada (todas las tablas recreadas).');
+        } else if (alter) {
+            console.log('Base de datos sincronizada (tablas alteradas segun los modelos).');
+        } else {
+            console.log('Base de datos sincronizada correctamente.');
+        }
+
+        return true;
+    } catch (error) {
+        console.error('X error al sincronizar la base de datos', error.message);
+        return false;
     }
 
+};
+//Exportar la instancia de sequelize y las funciones
+module.exports = {
+    sequelize,
+    testConnection,
+    syncDataBase
+};
