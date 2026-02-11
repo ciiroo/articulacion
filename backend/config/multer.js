@@ -70,3 +70,31 @@ const storage = multer.diskStorage({
  * @param {object} file - Archivo que se esta subiendo
  * @param {function} cb - Callback que se llama con (error, acceptFile)
  */
+const fileFilter = (req, file, cb) => {
+    //Tipos mine permitidos para imagenes
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+
+    //Verficiar si el tipo del archivo esta en la lista permitida
+    if (allowedTypes.includes(file.mimetype)) {
+        // cb(=null, true) -> aceptar el archivo
+        cb(null, true);
+    } else {
+        // cb(error, false) -> rechazar archivo
+        cb(new Error('Solo permite imagenes (JPG, JPEG, PNG, GIF)'), false);
+    }
+};
+
+/**
+ * Configurar multer con las opciones definidas
+ */
+
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+        // Limite de tamaño del archivo en bytes
+        //por defecto 5MB (5 * 1024) 5242880 bytes
+        fileSize: parseInt(process.env.MAX_FILE_SIZE) || 5242880
+        
+    }
+})
