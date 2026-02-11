@@ -95,6 +95,40 @@ const upload = multer({
         // Limite de tamaño del archivo en bytes
         //por defecto 5MB (5 * 1024) 5242880 bytes
         fileSize: parseInt(process.env.MAX_FILE_SIZE) || 5242880
-        
+
     }
-})
+});
+
+/**
+ * Funcion para eliminar el archivo del servidor
+ * Util cuando se actualiza o elimina el producto
+ *
+ * @param {string} fileName - Nombre del archivo a eliminar
+ * @returns {Boolean} - true si se elimino, false si hubo un error
+ */
+
+const deleteFile = (fileName) => {
+    try {
+        //Construir la ruta completa del archivo
+        const filePath = path.join(uploadPath, fileName);
+
+        //Verificar si el archivo existe
+        if(fs.existsSync(filePath)){
+            //Eliminar el archivo
+            fs.unlinkSync(filePath);
+            console.log(`Archivo eliminado: ${fileName}`);
+        } else {
+            console.warn(`Archivo no encontrado: ${fileName}`);
+            return false;
+        }
+    } catch (error) {
+        console.error('Error al eliminar el archivo;', error.message);
+        return false;
+    }
+};
+
+//Exportar configuracion de multer y funcion de eliminacion
+module.exports = {
+    upload,
+    deleteFile
+};
