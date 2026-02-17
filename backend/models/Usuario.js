@@ -12,11 +12,12 @@ const bcrypt = require('bcrypt');
 
 //Importar instancia de Sequelize
 const { sequelize } = require('../config/database');
+const { type } = require('os');
 
 /**
- * Definir el modelo de categoria
+ * Definir el modelo de usuario
  */
-const Categoria = sequelize.define('Categoria', {
+const Usuario = sequelize.define('Usuario', {
     //Campos de la tabla
     //Id idenrificado unico (PRIMARY KEY)
     id: {
@@ -25,15 +26,14 @@ const Categoria = sequelize.define('Categoria', {
         autoIncrement: true,
         allowNull: false
     },
+
+
     nombre: {
         type: DataTypes.STRING(100),
         allowNull: false,
-        unique: {
-            msg: 'Ya existe una categoria con ese nombre'
-        },
         validate: {
             notEmpty: {
-                msg: 'El nombre de la categoria no puede estar vacio'
+                msg: 'El nombre no puede estar vacio'
             },
             len: {
                 args: [2, 100],
@@ -42,70 +42,130 @@ const Categoria = sequelize.define('Categoria', {
         }
     },
 
-    /**
-     * Descripcion de la categoria
-     */
-    descripcion: {
-        type: DataTypes.TEXT,
-        allowNull: true
+    email: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        unique: {
+            msg: 'Este email ya esta registrado'
+        },
+        validate: {
+            isEmail: {
+                msg: 'Debe ser un email valido'
+            },
+            notEmpty: {
+                msg: 'El email no puede estar vacio'
+            }
+        }
+    },
+
+    password: {
+        type: DataTypes.STRING(255),//cadena larga para el hash
+        allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'La contraseña no puede estar vacia'
+            },
+            len: {
+                args: [6, 225],
+                msg: 'La contraseña debe tener almenos 6 caracteres'
+            }
+        }
+    },
+
+//rol del usuario (cliente auxiliar o administrador)
+    rol: {
+        type: DataTypes.ENUM('cliente', 'auxiliar', 'administrador'),//tres roles disponibles
+        allowNull: false,
+        defaultValue: 'cliente', //por defecto es cliente
+        validate: {
+            isIn: {
+                agrs:[['cliente', 'auxiliar', 'administrador']],
+                msg: 'El rol debe ser cliente, auxiliar o administrador'
+            },
+        }
+    },
+
+//telefono del usuario (opcional)
+    telefono: {
+        type: DataTypes.STRING(20),
+        allowNull: true, //OPCIONAL
+        validate: {
+            is: {
+                agrs: /^[0-9+\-\s()]*$/, //Solo numeros espacion guiones y parentesis
+                msg: 'El telefono solo puede ocntener numeros y caracteres validos'
+            },
+        }
     },
 
     /**
-     * activo estado de la categoria
-     * Si es false la categoria y todas sus subcategorias y productos se ocultan
+     * Direccion del usuario es opcional
+     */
+    direccion: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+    },
+
+
+    /**
+     * activo estado del usuario
      */
     activo: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: true
+        defaultValue: true //por defecto activo
     }
+
 }, {
     //Opciones del modelo
-    tableName: 'categorias',
+    tableName: 'usuarios', //nombre de tabla en la base de datos
     timestamps: true, //Agrega campos createdAt y updatedAt
 
     /**
-     * Hooks Acciones automaticas
+     * Scopes consultas predefinidas
      */
     
+    defaultScope: {
+        /**
+         * Por defecto excluir el password de todas las consultas
+         */
+        attributes: {exclude: ['password']}
+    },
+    scopes: {
+        //scope para incluir el password cuando sea necesario (ej. el login)
+        withPassword: {
+            attributes: {} //incluir todos los atributos
+        }
+    },
+
+    /**
+     * hoosks funciones para que se ejecuten en momentos especificos
+     */
     hooks: {
         /**
-         * afterupdate: se ejecuta despues de actualizar una categoria
-         * Si se desactiva una categoria, se desactivan todas sus subcategorias y productos relacionados
+         * beforeCreate se ejecuta antes de crear un usuario
+         * Encrpta la contraseña antes de guardarla en la base de datos
          */
-        afterUpdate: async (categoria, options) => {
-            //Verificar si el campo activo cambio
-            if (categoria.changed('activo') && !categoria.activo) {
-                console.log(`Desactivando categoria: ${categoria.nombre}`);
 
-                //IMportar modelos (aqui para evitar dependencias circulares)
-                const Subcategoria = require('./subcategoria');
-                const Producto = require('./Producto');
-                
-                try {
-                    //Paso 1 desactivar las subcategorias de esta categoria
-                    const subcategorias = await Subcategoria.findAll({ where: { categoriaId: categoria.id } });
-
-                    for (const subcategoria of subcategorias) {
-                        await subcategoria.update({ activo: false }, { transaction: options.transaction });
-                        console.log(`Subcategoria desactivada: ${subcategoria.nombre}`);
-                    }
-
-                    //Paso 2 desactivar los productos de esta categoria
-                    const productos = await Producto.findAll({ where: { categoriaId: categoria.id } });
-
-                    for (const producto of productos) {
-                        await producto.update({ activo: false }, { transaction: options.transaction });
-                        console.log(`Producto desactivado: ${producto.nombre}`);
-                    }
-                    console.log(`Categoria y elementos relacionados desactivados correctamente`);
-                } catch (error) {
-                    console.error('Error al desactivar categoria y elementos relacionados:', error.message);
-                    throw error;
-                }
+        beforeCreate: async (usuario) => {
+            if (usuario.password) {
+                //genera un salt (semilla aleatoria) con factor de costo de 10
+                const salt = await bcrypt.genSalt(10);
+                //Encriptar la contraseña con salt
+                usuario.password = await bcrypt.hash (usuario.password, salt);
             }
-            //Si se activa una categoria, no se activan automaticamente las subcategorias y productos
+        },
+/**
+ * beforeUpdate se ejecuta antes de actualizar un usuario
+ * Encripta la contraseña si fue modificada
+ */
 
+
+        beforeUpdate: async (usuario) => {
+            //Verificar si la contraseña fue modificada
+            if (usuario.changed('password')) {
+                const salt = await bcrypt.genSalt(10);
+                usuario.password = await bcrypt.hash (usuario.password, salt);
+            }
         }
     }
 
@@ -113,26 +173,28 @@ const Categoria = sequelize.define('Categoria', {
 
 //METODOS DE INSTANCIA
 /**
- * Metodo para contar subcategorias de esta categoria
- *
- *  @return {Promise<number>} - Numero de subcategorias
+ * Metodo para comparar contraseñas
+ * Compara una contraseña en texto plano con el hash guardad
+ * @param {string} passwordIngresado - contraseña en texto plano
+ *  @return {Promise<boolean>} - True si coinciden, false si no
  */
-
-categoria.prototype.contarSubcategorias = async function() {
-    const Subcategoria = require('./subcategoria');
-    return await Subcategoria.count({ where: { categoriaId: this.id } });
+Usuario.prototype.compararPassword = async function(passwordIngresado) {
+    return await bcrypt.compare(passwordIngresado, this.password);
 };
 
 /**
- * Metodo para contar productos de esta categoria
+ * Metodo para obtener datos publicos del usuario (sin contraseña)
  *
- *  @return {Promise<number>} - Numero de subcategorias
+ *  @returns {Object} - Objetos con datos publicos del usuario
  */
 
-categoria.prototype.contarProductos = async function() {
-    const Producto = require('./Producto');
-    return await Producto.count({ where: { categoriaId: this.id } });
+Usuario.prototype.toJSON = function() {
+    const valores =Object.assign({}, this.get());
+
+    //Eliminar la contraseña del objeto
+    delete valores.password;
+    return valores;
 };
 
-//Exportar el modelo de categoria
-module.exports = Categoria;
+//Exportar el modelo de Usuario
+module.exports = Usuario;
