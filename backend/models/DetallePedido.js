@@ -1,155 +1,122 @@
 /**
- * MODELO DETALLE PEDIDO
- * define la tabla detalle_pedidos en la base de datos
- * Almacena los productos incluidos en cada pedido
- * relacion muchos a muchos entre pedido y productos
- */
+ * modelo detallePedido
+ * define la tabla detallePedido en la base de datos
+ * almacena los productos incluidos en cada pedido
+ * relacion muchos a muchos entre pedidos y productos 
+     */
 
-
-//Importar Datatypes de sequelize
-const { DataTypes } = require('sequelize');
-
+//importar datatypes de sequelize
+    const { DataTypes } = require('sequelize');
 
 //importar instancia de sequelize
 const { sequelize } = require('../config/database');
+const { parse } = require('path');
 
 
 /**
- * Definir el modelo de detalle de pedido
+ * definir modelo detalle de pedido
  */
-const DetallePedido = sequelize.define('DetallePedido', {
-    // campos de la tabla
-    // id identificador unico (PRIMARY KEY)
+const detallePedido = sequelize.define('detallePedido', {
+    //campos de la tabla 
+    //id identificador unico (primary key)
     id: {
-        type: DataTypes.INTEGER, // tipo entero
-        primaryKey: true, // clave primaria
-        autoIncrement: true, // se incrementa automaticamente
-        allowNull: false // no puede ser nulo
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
     },
 
-
-    // Pedido ID del pedido al que pertenece este detalle
-    pedidoId: {
+    //pedidoId ID del pedido al que pertenece este detalle
+    pedidoId :{
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Pedidos',
+            model: 'pedidos',
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'CASCADE', // si se elimina el pedido se eliminan sus detalles
+        onDelete: 'CASCADE', //si se elimina el pedido se elimina los detalles
         validate: {
             notNull: {
-                msg: 'Debe especificar un pedido'
-            }
-        }
-    },
-    
-    nombre: {
-        type: DataTypes.STRING(100), // tipo cadena de texto
-        allowNull: false, // no puede ser nulo
-        unique:{
-            msg: 'Ya existe un detalle de pedido con ese nombre'
-        },
-        validate: {
-            notEmpty: {
-                msg: 'El nombre del detalle de pedido no puede estar vacio'
-            },
-            len: {
-                args: [2, 100],
-                msg: 'El nombre del detalle de pedido debe tener entre 2 y 100 caracteres'
+                msg: 'debe epecificar un pedido'
             }
         }
     },
 
-    /**
-     *descripcion del detalle de pedido
-     */
-
-    descripcion: {
-        type: DataTypes.TEXT,
-        allowNull: true, // puede ser nulo
-    },
-
-     // Producto ID del Producto en el pedido
-    productoId: {
+    //productoId ID del producto incluido en el producto
+    productoId :{
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Productos',
+            model: 'productos',
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT', // si se elimina el producto se eliminan sus detalles
+        onDelete: 'RESTRICT', //no se puede eliminar productos con pedidos  
         validate: {
             notNull: {
-                msg: 'Debe especificar un producto'
+                msg: 'debe epecificar un producto'
             }
         }
     },
 
-    // Cantidad de este producto en el pedido
-    cantidad: {
+    //cantidad de este producto en el pedido
+    cantidad : {
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 1,
         validate: {
             isInt: {
-                msg: 'La cantidad debe ser un numero entero'
+                msg : 'la cantidad debe ser un numero entero'
             },
-            min:{
+            min: {
                 args: [1],
-                msg: 'La cantidad debe ser al menos 1'
-            }
-        }
-    },
-
-
-    /**
-     * Precio unitario del producto al momento del pedido
-     * Se guarda para mantener el historial aunque el producto cambie de precio
-     */
-
-    precioUnitario: {
-        type: DataTypes.DECIMAL(10,2),
-        allowNull: false,
-        validate:{
-            isDecimal:{
-                msg: 'El precio debe ser un  numero decimal valido'
-            },
-            min:{
-                args: [0],
-                msg: 'El precio no puede ser negativo'
+                msg: 'la cantidad debe ser al menos 1'
             }
         }
     },
 
     /**
-     * Subtotal de este item (Precio * cantidad)
-     * Se calcula automaticamente antes de guardar
+     * precio unitario del producto al momento de agregarlo
+     * se guarda para mantener el historial aunque el producto cambie de precio
      */
-    subtotal:{
-        type: DataTypes.DECIMAL(10,2),
+    precioUnitario : {
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
-        validate:{
-            isDecimal:{
-                msg: 'El subtotal debe ser un numero decimal valido'
+        validate: {
+            isDecimal: {
+                msg: 'el precio debe ser un numero decimal valido'
             },
-            min:{
+            min: {
+                arg: [0],
+                msg: 'el precio no puede der negativo'
+            }
+        }
+    },
+
+    /**
+     * subtotal total de este item (precio * cantidad)
+     * se calcula auto antes de guardar
+     */
+    subtotal : {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        validate: {
+            isDecimal: {
+                msg: 'el subtotal debe ser un numero decimal valido'
+            },
+            min: {
                 args: [0],
-                msg: 'El subtotal no puede ser negativo'
+                msg: ' el subtotal no puede ser negativo'
             }
         }
     }
 }, {
-    //opciones del modelo
+    //opciones del modelo 
 
     tableName: 'detalle_pedidos',
-    timestamps: false, // no necesita createdAt/updatedAt
-
-    
-    //indices para mejorar las busquedas
-    indexes:[
+    timeStamps: false, //no necesita createdAt/updatedAt
+    //indiced para mejorar las busquedas
+    indexes: [
         {
             //indice para buscar detalles por pedido
             fields: ['pedidoId']
@@ -158,31 +125,26 @@ const DetallePedido = sequelize.define('DetallePedido', {
             //indice para buscar detalles por producto
             fields: ['productoId']
         },
-        
-
-
     ],
 
     /**
-     * hooks acciones automaticas
+     * hooks acciones automaticas 
      */
+
     hooks: {
         /**
          * beforeCreate - se ejecuta antes de crear un detalle de pedido
-         * calcula el subtotal automaticamente
-         * valida que este activo y tenga stock suficiente el producto que se esta agregando al carrito
+         * calcula el subtotal auto
          */
         beforeCreate: (detalle) => {
             //calcular subtotal precio * cantidad
             detalle.subtotal = parseFloat(detalle.precioUnitario) * detalle.cantidad;
         },
-
         /**
-         * beforeUpdate - se ejecuta antes de actualizar un detalle de pedido
-         * recalcula el subtotal si se cambio la cantidad o el precio
+         * afterUpdate - se ejecuta antes de actualizar detalle de pedido
+         * recalcula el subtotal si cambio el precio o cantidad
          */
-        beforeUpdate:(detalle) => {
-            
+        beforeUpdate: (detalle) => {
             if (detalle.changed('precioUnitario') || detalle.changed('cantidad')) {
                 detalle.subtotal = parseFloat(detalle.precioUnitario) * detalle.cantidad;
 
@@ -191,90 +153,74 @@ const DetallePedido = sequelize.define('DetallePedido', {
     }
 });
 
-//metodo de instancia
+//metodo de instancia 
 /**
  * metodo para calcular el subtotal
- *
- * @return {number} - subtotal calculado
+ * 
+ * @returns {number} - subtotal calcaulado
  */
-
-DetallePedido.prototype.calcularSubtotal = function () {
-    return parseFloat (this.precioUnitario) * this.cantidad;
+detallePedido.prototype.calcularSubtotal = function() {
+    return parseFloat(this.precioUnitario) * this.cantidad;
 };
 
 /**
- * Metodo para crear detalles del pedido desde el carrito
+ * metodo para crear detalles del pedido desde el carrito
  * convierte los items del carrito en detalles de pedido
- * @param {number} pedidoId - ID del pedido al que se asociarán los detalles
- * @param {Array} itemsCarrito - Array de items del carrito con productoId, cantidad y precioUnitario
- * @returns {Promise<Array>} - Detalles del pedido creados
- */
-
-DetallePedido.crearDesdeCarrito = async function (pedidoId, itemsCarrito){
+ * @param {number} pedidoId - id del pedido
+ * @param {Array} itemsCarrito - items del carrito
+ * @returns {Promise<Array>} detalles del pedido creados
+*/
+detallePedido.crearDesdeCarrito = async function(pedidoId, itemsCarrito) {
     const detalles = [];
-    for (const item of itemsCarrito){
+
+    for (const item of itemsCarrito) {
         const detalle = await this.create({
             pedidoId: pedidoId,
             productoId: item.productoId,
             cantidad: item.cantidad,
-            precioUnitario: item.precioUnitario,
+            precioUnitario: item.precioUnitario
         });
         detalles.push(detalle);
     }
     return detalles;
 };
 
-
 /**
- * Metodo para calcular el total de un pedido desde sus detalles
+ * metodo para calcular el total de un pedido desde sus detalles
+ * inlcuye informacion de los productos
  * @param {number} pedidoId - ID del pedido
- * @returns {Promise<number>} - Total calculado
+ * @returns {Promise<number>} - total calculado
  */
-
-DetallePedido.calcularTotalPedido = async function (pedidoId) {
-    const detalles = require('./Producto');
-
-    return await this.findAll({
+detallePedido.calcularTotalPedido = async function(pedidoId) {
+    const detalles = await this.findAll({
         where: {pedidoId},
-        include: [
-            {
-                model: Producto,
-                as: 'producto'
-            }
-        ],
-        order: [['createdAt', 'DESC']]
     });
-};
-
-/**
- * Metodo para calcular el total del carrito de un usuario
- * @param {number} usuarioId - ID del usuario
- * @returns {Promise<number>} - Total del carrito
- */
-
-Carrito.calcularTotalCarrito = async function(usuarioId){
-    const items = await this.findAll({ where: { usuarioId } });
 
     let total = 0;
-    for (const item of items) {
-        total += item.calcularSubtotal();
+    for (const detalle of detalles) {
+        total += parseFloat(detalle.subtotal);
     }
     return total;
 };
 
-
 /**
- * Metodo para vaciar el carrito de un usuario
- * util despues de realizar un pedido
- * @param {number} usuarioId - ID del usuario
- * @return {Promise<number>} - Numero de items eliminados
+ * metodo para obtener resumen de productos mas vendidos
+ * @param {number} limite - numero de productos a retornar
+ * @returns {promise<Array>} productos mas vendidos
  */
+detallePedido.obtenerMasVendidos = async function(limite = 10) {
+    const { sequelize } = require('../config/database');
 
-Carrito.vaciarCarrito = async function(usuarioId){
-    return await this.destroy({
-        where: { usuarioId }
+    return await this.findAll({
+        attributes: [
+            'productoId',
+            [sequelize.fn('SUM', sequelize.col('cantidad')), 'totalVendido']
+        ],
+        group: ['productoId'],
+        order: [[sequelize.fn('SUM', sequelize.col('cantidad')), 'DESC']],
+        limit: limite
     });
 };
 
-//Exportar modelo
-module.exports = Carrito;
+//exportar modelo 
+module.exports = detallePedido;
