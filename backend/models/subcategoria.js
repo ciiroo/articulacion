@@ -111,7 +111,7 @@ const subcategoria = sequelize.define('Categoria', {
          * verifica que la categoria padre este activa
          */
         beforeCreate: async (subcategoria, options) => {
-            const categoria = require('./categoria');
+            const categoria = require('./Categoria');
 
             //buscar categoria padre
             const categoria = await categoria.findByPk(subcategoria.categoriaId);
@@ -175,7 +175,7 @@ subcategoria.prototype.contarproductos = async function () {
  * @returns {Promise<Categoria>} categoria padre
  */
 subcategoria.prototype.obtenerCategoria = async function () {
-    const categoria = require('./categoria');
+    const categoria = require('./Categoria');
     return await categoria.findByPk(this.categoriaId);
 };
 

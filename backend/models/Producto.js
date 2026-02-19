@@ -178,7 +178,7 @@ const Producto = sequelize.define('Producto', {
          * valida que la subcategoria y que la categoria padre esten activas
          */
         beforeCreate: async (producto) => {
-            const categoria = require('./categoria');
+            const categoria = require('./Categoria');
             const subcategoria = require('./subcategoria');
 
             //Buscar subcategoria padre
@@ -242,7 +242,7 @@ producto.producto.hayStock = function(cantidad = 3) {
  * @returns {Promise<Producto>} producto actualizado
  */
 
-producto.prototype.reducirStock = async function (cantidad) {
+Producto.prototype.reducirStock = async function (cantidad) {
     if (this.hayStock(cantidad)) {
         throw new Error('Stock insuficiente');
     }
@@ -252,4 +252,4 @@ producto.prototype.reducirStock = async function (cantidad) {
 }
 
 //exportar modelo producto
-module.exports = producto;
+module.exports = Producto;

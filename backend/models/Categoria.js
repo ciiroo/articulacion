@@ -115,7 +115,7 @@ const Categoria = sequelize.define('Categoria', {
  *  @return {Promise<number>} - Numero de subcategorias
  */
 
-categoria.prototype.contarSubcategorias = async function() {
+Categoria.prototype.contarSubcategorias = async function() {
     const Subcategoria = require('./subcategoria');
     return await Subcategoria.count({ where: { categoriaId: this.id } });
 };
@@ -126,10 +126,10 @@ categoria.prototype.contarSubcategorias = async function() {
  *  @return {Promise<number>} - Numero de subcategorias
  */
 
-categoria.prototype.contarProductos = async function() {
+Categoria.prototype.contarProductos = async function() {
     const Producto = require('./Producto');
     return await Producto.count({ where: { categoriaId: this.id } });
 };
 
 //Exportar el modelo de categoria
-module.exports = Categoria;
+module.exports = Categoria
