@@ -1,7 +1,7 @@
 /**
- * Controlador de categorias
- * maneja las operaciones CRUD y la activacion/desactivacion de categorias
- * solo accesible ór usuarios con rol administrador
+ * Controlador de subcategorias
+ * maneja las operaciones CRUD y la activacion/desactivacion de las subcategorias
+ * solo accesible por usuarios con rol administrador
  */
 
 /**
@@ -43,47 +43,47 @@ const getCategorias = async (req, res) => {
             }]
     }
 
-        //obtener categorias
-        const categorias = await categoria.findAll (Opciones);
+        //Obtener subcategorias
+        const subcategorias = await subcategoria.findAll (Opciones);
 
         //Respuesta exitosa
         res.json({
             succes: true,
-            count: categorias.length,
+            count: subcategorias.length,
             data: {
-                categorias
+                subcategorias
             }
         });
 
     } catch (error) {
-        console.error('Error en getCategorias: ', error);
+        console.error('Error en getsubcategorias: ', error);
         res.status(500).json({
             succes: false,
-            message: 'Error al obtener categorias',
+            message: 'Error al obtener subcategorias',
             error: error.message
         })
     }
 };
 
 /**
- * Obtener las categorias por id
- * GET /api/categorias/:id
+ * Obtener las subcategorias por id
+ * GET /api/subcategorias/:id
  *
  * @param {Object} req request Express
  * @param {Object} res response Express
  */
 
-const getCategoriasById = async (req, res) => {
+const getsubcategoriasById = async (req, res) => {
     try {
         const { id} = req.query;
 
-        //Buscar categorias con subcategorias y contar productos
-        const categoria = await Categoria.findByPk (id, {
+        //Buscar subcategorias con categoria y contar productos
+        const subcategoria = await subcategoria.findByPk (id, {
             include: [
                 {
-                    model:subcategoria,
-                    as: 'subcategorias',
-                    attributes: ['id', 'nombre', 'descripcion', 'activo']
+                    model:categoria,
+                    as: 'categoria',
+                    attributes: ['id', 'nombre', 'activo']
                 },
                 {
                     model: Producto,
@@ -93,7 +93,7 @@ const getCategoriasById = async (req, res) => {
             ]
         });
 
-        if (!categoria) {
+        if (!subcategoria) {
             return res.status(404).json({
                 succes: false,
                 message: 'Categoria no encontrada'
@@ -101,45 +101,54 @@ const getCategoriasById = async (req, res) => {
         }
 
         //agregar contador de productos
-        const categoriaJSON = categoria.toJSON();
-        categoriaJSON.totalProductos = categoriaJSON.productos.length;
-        delete categoriaJSON.productos; //no enviar la lista completa solo el contador
+        const subcategoriaJSON = subcategoria.toJSON();
+        subcategoriaJSON.totalProductos = subcategoriaJSON.productos.length;
+        delete subcategoriaJSON.productos; //no enviar la lista completa solo el contador
 
         //respuesta exitosa
         res.json({
             succes: true,
             data: {
-                categoria: categoriaJSON
+                subcategoria: subcategoriaJSON
             }
         });
 
     } catch (error) {
-        console.error('Error en getCategoriasById: ', error);
+        console.error('Error en getSubcategoriaById: ', error);
         res.status(500).json({
             succes: false,
-            message: 'Error al obtener categoria',
+            message: 'Error al obtener subcategoria',
             error: error.message
         })
     }
 };
 
 /**
- * Crear una categoria
+ * Crear una subcategoria
  * POST /api/admin/categorias
  * Body: {nombre, descripcion}
  * @param {Object} req request Express
  * @param {Object} res response Express
  */
 
-const crearCategoria = async (req, res) => {
+const crearSubcategoria = async (req, res) => {
     try {
         const { nombre, descripcion} = req.body;
 
         //Validacion 1 verificar campos requeridos
-        if (!nombre) {
+        if (!nombre || categoriaId) {
             return res.status(400).json ({
                 success: false,
-                message: 'El nombre de la categoria es requerido'
+                message: 'El nombre y categoriaId es requerido'
+            });
+        }
+
+        //Validar si la categoria existe
+        const categoria = await Categoria.findByPk (categoriaId);
+        if (!categoria) {
+            return res.status(404).json({
+                succes: false,
+                message: `no existe la categoria on id ${categoriaId}`
             });
         }
 
