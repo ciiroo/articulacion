@@ -194,7 +194,7 @@ const crearCategoria = async (req, res) => {
  * @param {Object} res response Express
  */
 
-const actualizaCategoria = async (req, res) => {
+const actualizarCategoria = async (req, res) => {
     try {
         const { id } = req.params;
         const { nombre, descripcion} = req.body;
@@ -312,5 +312,180 @@ const toggleCategoria = async (req, res) => {
             }
         });
 
+    } catch (error) {
+        console.error('Error en toggleCategoria:', error);
+        res.status(500).json({
+            succes: false,
+            message: 'Error al cambiar estado de la categoria',
+            error: error.message
+        });
     }
-}
+};
+
+/**
+ * Eliminar categoria
+ * DELETE /api/admin/categorias/:id
+ * Solo permite eliminar si no tiene subcategorias ni productos relacionados
+ * @param {Object} req request Express
+ * @param {Object} res response Express
+ */
+const eliminarCategoria = async (req, res) =>{
+    try {
+        const {id} = req.params;
+
+        //Buscar categoria
+        const caegoria = await Categoria.findByPk(id);
+
+            if(!categoria) {
+                return res.status(404).json({
+                    succes: false,
+                    message: 'Categoria no encontrada'
+            });
+        }
+
+        //Validacion verificar que no tenga subcategorias
+        const subcatgorias = await subcategoria.count({
+            where: { categoriaId: id}
+        });
+
+        if(subcategorias > 0) {
+            return res.status(400).json({
+                succes: false,
+                message: `No se puede eliminar la categoria porque tiene ${subcategorias} asociadas usa PATCH /api/admin/categorias/:id toggle para desactivarla en lugar de eliminarla`
+            });
+        }
+        //Validacion verificar que no tenga productos
+        const productos = await Producto.count({
+            where: { categoriaId: id}
+        });
+
+        if(productos > 0) {
+            return res.status(400).json({
+                succes: false,
+                message: `No se puede eliminar la categoria porque tiene ${productos} asociadas usa PATCH /api/admin/categorias/:id toggle para desactivarla en lugar de eliminarla`
+            });
+        }
+
+        //Eliminar categoria
+        await categoria.destroy();
+        
+        //Respuesta exitosa
+        res.json({
+            succes: true,
+            message: 'Categoria eliminada exitosamente'
+        });
+    } catch (error) {
+        console.error('Error al eliminar la categoria' ,error);
+        res.status(500).json({
+            succes: false,
+            message:'Error al eliminar la categoria',
+            error: error.message
+        });
+    }
+};
+
+/**
+ * Obtener estadisticas de una categoria
+ * GET /api/admin/categorias/:id/estadisticas
+ * retorna
+ * Total de subcategorias activas / inactivas
+ * Total de productos activos / inactivos
+ * Valor del inventario
+ * Stock total
+ * @param {Object} req request Express
+ * @param {Object} res response Express
+ */
+const getEstadisticasCategoria = async (req, res) =>{
+    try {
+        const {id} = req.params;
+
+        //Verificar que la categoria exista
+        const categoria = await Categoria.findByPk (id);
+
+        if (!categoria) {
+            return res.status(404).json({
+                succes: false,
+                message: 'Categoria no encontrada'
+            });
+        }
+
+        //Contar subcategorias
+        const totalSubcategorias = await subcategoria.count({
+            where: { categoriaId: id}
+        });
+
+        const subcategoriasActivas = await subcategoria.count({
+            where: { categoriaId: id, activo: true }
+        });
+
+        //Contar productos
+        const totalProductos = await Producto.count({
+            where: { categoriaId: id}
+        });
+
+        const productosActivos = await Producto.count({
+            where: { categoriaId: id, activo: true }
+        });
+
+        //Obtener productos para calcular estadisticas
+        const productos = await Producto.findAll({
+            where: { categoriaId: id},
+            attributes: ['precio', 'stock']
+        });
+
+        //Calcular estadisticas de inventario
+        let valorTotalInventario = 0;
+        let stockTotal = 0;
+
+        productos.forEach(producto => {
+            valorTotalInventario += parseFloat(producto.precio) * producto.stock;
+            stockTotal += producto.stock;
+        });
+
+//respuesta exitosa
+        res.json({
+            success: true,
+            data: {
+                categoria: {
+                id: categoria.id,
+                nombre: categoria.nombre,
+                activo: categoria.activo,
+                },
+                estadisticas: {
+                    Subcategorias: {
+                        total: totalSubcategorias,
+                        activas: subcategoriasActivas
+                    },
+                    productos: {
+                        total: totalProductos,
+                        activas: productosActivos,
+                        inactivas: totalProductos - productosActivos
+                    },
+                    inventario: {
+                        stockTotal,
+                        valorTotal: valorTotalInventario.toFixed(2) //quitar decimales
+                    }
+                }
+            },
+        });
+
+    } catch (error) {
+        console.error('error en getEstadisticasCategoria', error);
+        res.status(500).json({
+            success: false,
+            message: 'error al obtener estadisticas',
+            error: error.message
+        });
+    }
+};
+
+//exportar todos los controladores
+module.exports = {
+    getCategorias,
+    getCategoriasById,
+    crearCategoria,
+    actualizarCategoria,
+    toggleCategoria,
+    eliminarCategoria,
+    getEstadisticasCategoria
+};
