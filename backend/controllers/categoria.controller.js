@@ -101,7 +101,7 @@ const getCategoriasById = async (req, res) => {
         }
 
         //agregar contador de productos
-        const categoriaJSON = categoria.toJSON();
+        const categoriaJSON = Categoria.toJSON();
         categoriaJSON.totalProductos = categoriaJSON.productos.length;
         delete categoriaJSON.productos; //no enviar la lista completa solo el contador
 
@@ -334,7 +334,7 @@ const eliminarCategoria = async (req, res) =>{
         const {id} = req.params;
 
         //Buscar categoria
-        const caegoria = await Categoria.findByPk(id);
+        const categoria = await Categoria.findByPk(id);
 
             if(!categoria) {
                 return res.status(404).json({
@@ -344,7 +344,7 @@ const eliminarCategoria = async (req, res) =>{
         }
 
         //Validacion verificar que no tenga subcategorias
-        const subcatgorias = await subcategoria.count({
+        const subcategorias = await subcategoria.count({
             where: { categoriaId: id}
         });
 
