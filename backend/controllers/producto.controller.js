@@ -23,7 +23,7 @@ const fs = require('fs');
  * categoriaId: Id de la categoria para filtrar por categoria
  * subcategoriaId: Id de la subcategoria para filtrar por subcategoria
  * activo true/false (filtrar por estado activo/inactivo)
- * 
+ *
  *
  * @param {Object} req request express
  * @param {Object} res response express
@@ -32,7 +32,7 @@ const fs = require('fs');
 const getProductos = async (req, res) => {
     try {
         const {categoriaId,
-            SubcategoriaId, 
+            SubcategoriaId,
             activo,
             conStock,
             buscar,
@@ -268,7 +268,7 @@ const crearProducto =async (req, res) => {
         await nuevoProducto.reload({
             include: [
                 {model: Categoria, as: 'categoria', attributes: ['id', 'nombre']},
-                {model: subcategoria, as: 'subcategoria', attributes: ['id', 'nombre']},                
+                {model: subcategoria, as: 'subcategoria', attributes: ['id', 'nombre']},
             ]
         })
 
@@ -558,10 +558,10 @@ const eliminarProducto = async (req, res) => {
 
 /**
  * Actualizar stock de un producto
- * 
+ *
  * PATCH /api/admin/productos/:id/stock
  * body: {cantidad, operacion: 'aumentar' | 'reducir' | 'establecer'}
- * 
+ *
  * @param {Object} req request express
  * @param {Object} res response express
  */
@@ -619,7 +619,7 @@ const actualizarStock = async (req, res) => {
                             return res.status(400).json({
                                 success: false,
                                 message: 'operacion invalida. debe ser aumentar, reducir o establecer'
-                            }); 
+                            });
                         
 
                 producto.stock = nuevoStock;
