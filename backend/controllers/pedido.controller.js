@@ -175,7 +175,6 @@ const crearPedido = async (req, res) => {
                     model: Usuario,
                     as: 'usuario',
                     attributes: ['id','nombre','email']
-
                 },
                 {
                     model: DetallePedido,
@@ -227,7 +226,7 @@ const getMisPedidos = async (req, res ) => {
     try {
         const {estado, pagina =1, limite =10 } = req.query;
 
-        // filtros 
+        // filtros
         const where = { usuarioId: req.usuario.id };
         if (estado) where.estado = estado;
 
@@ -299,7 +298,7 @@ const getPedidoById = async (rec , res ) => {
             where.usuarioId
         }
 
-        //Buscar pedido 
+        //Buscar pedido
         const pedido = await Pedido.findOne({
             where,
             include: [
