@@ -310,7 +310,6 @@ const crearProducto =async (req, res) => {
         });
     }
 
-// HASTA AQUI  CORRECCION PROFE
 /**
  * actualizar producto
  * PUT /api/admin/productos/:id

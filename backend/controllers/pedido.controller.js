@@ -6,13 +6,13 @@
 
 //Importar modelos
 
-const pedido = require('../models/pedido');
+const Pedido = require('../models/pedido');
 const DetallePedido = require('../models/DetallePedido');
 const Carrito = require('../models/Carrito');
 const Producto = require('../models/Producto');
 const Usuario = require('../models/Usuario');
 const Categoria = require('../models/Categoria');
-const subcategoria = require('../models/subcategoria');
+const Subcategoria = require('../models/subcategoria');
 const Pedido = require('../models/pedido');
 
 /**
