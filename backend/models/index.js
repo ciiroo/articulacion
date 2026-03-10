@@ -13,7 +13,7 @@ const Producto = require('./Producto');
 const Carrito = require('./Carrito');
 const Pedido = require('./pedido');
 const DetallePedido = require('./DetallePedido');
-const Pedido = require('./pedido');
+const pedido = require('./pedido');
 
 /**
  * Definir asociaciones
@@ -126,7 +126,7 @@ Usuario.hasMany(Pedido, { foreignKey: 'pedidoId', //campo que conecta las tablas
     onUptade: 'CASCADE' //Si se actualiza usuario se actualiza pedido
 });
 
-Pedido.belongsTo(Usuario, { foreignKey: 'usuarioId', //campo que conecta las tablas
+pedido.belongsTo(Usuario, { foreignKey: 'usuarioId', //campo que conecta las tablas
     as: 'usuario', //Alias para la relacion
     onDelete: 'RESTRICT', //si elimina usuario NO elimina el pedido
     onUptade: 'CASCADE' //Si se actualiza usuario se actualiza pedido
@@ -138,7 +138,7 @@ Pedido.belongsTo(Usuario, { foreignKey: 'usuarioId', //campo que conecta las tab
  * Un detalle de pedido pertenece a un pedido
  */
 
-Pedido.hasMany(DetallePedido, { foreignKey: 'pedidoId', //campo que conecta las tablas
+pedido.hasMany(DetallePedido, { foreignKey: 'pedidoId', //campo que conecta las tablas
     as: 'detalle_pedidos', //Alias para la relacion
     onDelete: 'CASCADE', //si elimina pedido elimina detallepedido
     onUptade: 'CASCADE' //Si se actualiza pedido se actualiza detallepedido
@@ -173,7 +173,7 @@ DetallePedido.belongsTo(Producto, { foreignKey: 'productoId', //campo que conect
  * pedido y producto tienen una relacion muchos a muchos atravez de detalle pedido
  */
 
-Pedido.belongsTo(Producto, {
+pedido.belongsTo(Producto, {
     through: DetallePedido, //campo que conecta las tablas
     foreignKey: 'pedidoId', // Campo que conecta las tablas
     otherKey: 'productoId', //
@@ -204,7 +204,7 @@ module.exports = {
     subcategoria,
     Producto,
     Carrito,
-    Pedido,
+    pedido,
     DetallePedido,
     initAssociations
 };

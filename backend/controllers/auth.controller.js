@@ -245,7 +245,7 @@ const getMe = async (req, res) => {
  * @param {Object} res response Express
  */
 
-const updateMe = async (req, res) => {
+const uptadeMe = async (req, res) => {
     try {
         const { nombre, apellido, telefono, direccion} = req.body;
 
@@ -363,6 +363,6 @@ module.exports = {
     registrar,
     login,
     getMe,
-    updateMe,
+    uptadeMe,
     changePassword
 };
