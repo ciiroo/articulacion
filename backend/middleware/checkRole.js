@@ -187,7 +187,47 @@ const esAdminOAuxiliar = (req, res, next) => {
 
 /**
  * Mddleware para verificar que el usuario es solo administrador no auxiliar
- * Bloquea rl acceso a operaciones como eliminar
+ * Bloquea el acceso a operaciones como eliminar
  */
+
+const soloAdministrador = ( req, res, next) => {
+    try {
+        if(!req.usuario) {
+            return res.status(401).json({
+                success: false,
+                message: 'No autorizado debes iniciar sesion primero'
+            });
+        }
+
+        //Verificar que el rol es administrador
+        if(req.usuario.rol !== 'administrador') {
+            return res.status(403).json({
+                success: false,
+                message: 'acceso denegado requiere administradores para realizar esta operacion'
+            });
+        }
+
+        //El usuario es administrador continuar
+        next();
+
+    } catch (error) {
+        console.error('Error en middleware soloAdministrador', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error al verificar permisos', 
+            error: error.message
+        });
+    }
+};
+
+//Exportar los middlewares
+module.exports = {
+    esAdministrador,
+    esCliente,
+    esPropioUsuarioOAdmin,
+    esAdminOAuxiliar,
+    soloAdministrador
+};
+
 
 

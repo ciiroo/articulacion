@@ -23,6 +23,9 @@ const pedidoController = require('../controllers/pedido.controller');
 //restricciones de acceso a las rutas del admin
 router.use(verificarAuth, esAdminOAuxiliar);
 
+//##-----------------------CATEGORIA-----------------------##//
+
+
 //Rutas de categorias
 //get /api/admin/categorias
 router.get('/categorias', categoriaController.getCategorias);
@@ -116,6 +119,41 @@ router.patch('/usuarios/:id/toogle', usuarioController.getUsuarios);
 
 //delete /api/admin/Usuarios
 router.get('/usuarios/:id', soloAdministrador, usuarioController.eliminarUsuario);
+
+//##-----------------------PEDIDOS (ADMINS)-----------------------##//
+
+//PUT /api/admin/pedidos
+router.put('/pedidos/:id', soloAdministrador, pedidoController.actualizarEstadoPedido);
+
+//get /api/admin/pedidos
+router.get('/pedidos', soloAdministrador, pedidoController.getAllPedidos);
+
+//get /api/admin/usuarios/:id/stats
+router.get('/pedidos:id/stats', soloAdministrador, pedidoController.getEstadisticasPedidos);
+
+//##-----------------------OTROS (pedidos)-----------------------##//
+
+//POST /api/admin/pedidos
+router.post('/pedidos', pedidoController.crearPedido);
+
+//get /api/admin/pedidos
+router.get('/pedidos', pedidoController.getMisPedidos);
+
+//get /api/admin/pedidos:id
+router.get('/pedidos/:id', pedidoController.getPedidoById);
+
+//delete /api/admin/pedidos
+router.get('/pedidos/:id', pedidoController.cancelarPedido);
+
+
+
+
+
+
+
+
+
+
 
 
 
