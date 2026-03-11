@@ -8,7 +8,7 @@
 const jwt = require('jsonwebtoken');
 
 //Importar dotenv para acceder a las variables de entorno
-required('dotenv').config();
+require('dotenv').config();
 
 /**
  * Generar un token JWT para un usuario
@@ -43,7 +43,7 @@ const generateTokens = (payload) => {
  * @throws {Error} - Si el token es invalido o ha expirado
  */
 
-const verifyToken = (tokenHeader) => {
+const verifyToken = (tokenHeader) => { //trae el token y verifica que sea valido (el token generado al iniciar sesion)
     try{
         //jwt.verify() verifica la firma del token y decodifica
         //paraemetros:
@@ -65,18 +65,19 @@ const verifyToken = (tokenHeader) => {
 };
 /** extraer el token de un header de autorizacion
  * el token viene en formato 'Bearer <token'
- * 
+ *
  * @param {string} authHeader - header de autorizacion de la peticion
- * @returns {string|null} - el token extraido o null si no existe 
+ * @returns {string|null} - el token extraido o null si no existe
  */
 
 const extractToken = (authHeader) => {
     //verifica que el header existe y empieza con "Bearer "
     if(authHeader && authHeader.startsWith('Bearer')){
         //Extraer solo el token (remover "Bearer ")
-        return authHeader.substring(7);
+        return authHeader.substring(7); //caracteres de seguridad que no pertenecen al token, se remueven para obtener el token puro
     }
-    return null; //no se encontro un token valido 
+    
+    return null; //no se encontro un token valido
 };
 
 //Exportar las funciones para usarlas en otras partes del proyecto

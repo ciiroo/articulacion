@@ -29,7 +29,6 @@ const getUsuarios = async (req, res) => {
         if (rol) where.rol = rol;
         if (activo !== undefined) where.activo = activo === 'true';
 
-
         //Busqueda por texto
         if (buscar) {
             const {Op} = require('sequelize');
@@ -38,7 +37,6 @@ const getUsuarios = async (req, res) => {
                 {apellido: { [Op.like]: `%${buscar}%` } },
                 {email: { [Op.like]: `%${buscar}%` } },
             ];
-
         }
 
         //Paginacion
@@ -143,7 +141,7 @@ const crearUsuario = async (req, res) => {
             });
         }
 
-        //Validar rol 
+        //Validar rol
         if (!['cliente', 'auxiliar', 'administrador'].includes(rol)) {
             return res.status(400).json(400).json({
                 success: false,
@@ -166,7 +164,7 @@ const crearUsuario = async (req, res) => {
         const nuevoUsuario = await Usuario.create({
             nombre,
             apellido,
-            email, 
+            email,
             password,
             rol,
             telefono: telefono || null, //si no se proporciona se establece como null
@@ -182,7 +180,6 @@ const crearUsuario = async (req, res) => {
                 usuario: nuevoUsuario.toJson() //convertit a json para excluir campos sensibles
             }
         });
-
     } catch (error) {
         console.error('Error al crearUsuario')
         if(error.name === 'SequelizeValidationError'){
@@ -238,6 +235,8 @@ const actualizarUsuario = async (req, res) => {
         if (email !== undefined) usuario.email = email;
         if (direccion !== undefined) usuario.direccion = direccion;
         if (rol !== undefined) usuario.rol = rol;
+        if (password !== undefined) usuario.password = password;
+        if (telefono !== undefined) usuario.telefono = telefono;
 
     
 
@@ -295,7 +294,7 @@ const toggleUsuario = async (req, res) => {
         }
 
         usuario.activo = !usuario.activo;
-        await usuario.save(); 
+        await usuario.save();
         
         res.json ({
             success: true,
@@ -307,7 +306,6 @@ const toggleUsuario = async (req, res) => {
 
     } catch (error) {
         console.error('Error en toggleUsuario: ', error);
-
         res.status(500).json ({
             success: false,
             message: 'Error al cambiar estado del usuario',
@@ -330,7 +328,7 @@ const eliminarUsuario = async (req, res) =>{
         //Buscar usuario
         const usuario = await Usuario.findByPk(id);
 
-            if(!usuaio) {
+            if(!usuario) {
                 return res.status(404).json({
                     succes: false,
                     message: 'Usuario no encontrado'
@@ -371,9 +369,7 @@ const eliminarUsuario = async (req, res) =>{
  */
 const getEstadisticasUsuarios = async (req, res) =>{
     try {
-
         //datos de usuarios
-
         const totalUsuarios = await Usuario.count ();
         const totalClientes = await Usuario.count ({ where: { rol: 'cliente' }});
         const totalAdmins = await Usuario.count ({ where : { rol: 'administrador'}});
@@ -396,7 +392,7 @@ const getEstadisticasUsuarios = async (req, res) =>{
                     },
                     
                     }
-                })
+                });
             
 
     } catch (error) {

@@ -33,7 +33,7 @@ const registrar = async (req, res) => {
             })
         }
 
-        // validacion 2 verificar formato de email 
+        // validacion 2 verificar formato de email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             return res.status(400).json ({
@@ -88,9 +88,12 @@ const registrar = async (req, res) => {
             rol: nuevoUsuario.rol
         })
 
-        //Respuesta exitosa
+        //preparar respuesta si password
         const usuarioRespuesta = nuevoUsuario.toJSON();
         delete usuarioRespuesta.password; //elimina el campo de contraseña
+
+
+        //Respuesta exitosa
         res.status(201).json({
             success: true,
             message: 'Usuario registrado exitosamente',
@@ -113,7 +116,7 @@ const registrar = async (req, res) => {
 /**
  * iniciar sesion login
  * Autentica un usuario con email y contraseña
- * retorna el usuario y un token JWT si las credenciales son correctas 
+ * retorna el usuario y un token JWT si las credenciales son correctas
  * POST / api / auth / login
  * body {email, password}
  */
@@ -328,7 +331,6 @@ const uptadeMe = async (req, res) => {
 
             // validacion 4 verificar que la contraseña actual sea correcta
             const passwordValida = await usuario.compararPassword(passwordActual);
-
             if (!passwordValida) {
                 return res.status(400).json ({
                     success: false,

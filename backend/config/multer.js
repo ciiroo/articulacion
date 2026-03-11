@@ -13,10 +13,10 @@ const multer = require('multer');
 const path = require('path');
 
 // Importar fs para verificar / crear directorios
-const fs = require('fs');
+const fs = require('fs'); //fincion que permite leer, escribir, crear y eliminar archivos del sistema
 
 // Importar detenv para variables de entorno
-require('dotenv').config();
+require('dotenv').config(); //importa y verifica las variables de entorno definidas en el archivo .env, como UPLOAD_PATH y MAX_FILE_SIZE
 
 // Obtener la ruta de donde se guardan los archivos
 const uploadPath = process.env.UPLOAD_PATH || './uploads';
@@ -89,9 +89,9 @@ const fileFilter = (req, file, cb) => {
  */
 
 const upload = multer({
-    storage: storage,
+    storage: storage, //permitir guardar el archivo en el disco con la configuracion definida
     fileFilter: fileFilter,
-    limits: {
+    limits: { //rectifica nuevamente
         // Limite de tamaño del archivo en bytes
         //por defecto 5MB (5 * 1024) 5242880 bytes
         fileSize: parseInt(process.env.MAX_FILE_SIZE) || 5242880

@@ -31,7 +31,8 @@ const fs = require('fs');
 
 const getProductos = async (req, res) => {
     try {
-        const {categoriaId,
+        const {
+            categoriaId,
             SubcategoriaId,
             activo,
             conStock,
@@ -40,13 +41,23 @@ const getProductos = async (req, res) => {
             limite = 100
             } = req.query;
 
-            //Construir filtros
+        //Construir filtros
         const where = {};
         if (categoriaId) where.categoriaId = categoriaId;
         if (SubcategoriaId) where.SubcategoriaId =
         SubcategoriaId;
         if (activo !== undefined) where.activo = activo === 'true';
         if (conStock === 'true') where.stock = {[require('sequelize').Op.gt]: 0};
+
+        if (buscar) {
+            const {Op} = require('sequelize');
+            //Op.or busca por nombre o descripcion
+            //Op.like equivale a un like en sql con comodines para buscar considencias parciales
+            where[Op.or] = [
+                {nombre: { [Op.like]: `%${buscar}%` }}, //filtra de manea automatica mientras uno va buscando x producto
+                {descripcion: { [Op.like]: `%${buscar}%`}}
+            ];
+        }
 
         //paginacion
         const offset = (parseInt(pagina) -1) * parseInt(limite);
@@ -62,9 +73,7 @@ const getProductos = async (req, res) => {
                     model: Categoria,
                     as: 'categoria',
                     attributes: ['id', 'nombre']
-                }
-            ],
-                include: [
+                },
                 {
                     model: subcategoria,
                     as: 'subcategoria',
@@ -117,20 +126,20 @@ const getProductoById = async (req, res) => {
         const {id} = req.params;
 
         //buscar productos con relacion
-        const producto = await Producto.findByPk(id, {
-            include: [{
-                model: Categoria,
-                as: 'categoria',
-                attributes: ['id', 'nombre', 'activo']
-            }],
-
-            include: [{
-                model: subcategoria,
-                as: 'subcategoria',
-                attributes: ['id', 'nombre', 'activo']
-            }]
-        });
-
+const producto = await Producto.findByPk(id, {
+    include: [
+        {
+            model: Categoria,
+            as: 'categoria',
+            attributes: ['id', 'nombre', 'activo']
+        },
+        {
+            model: subcategoria,
+            as: 'subcategoria',
+            attributes: ['id', 'nombre', 'activo']
+        }
+    ]
+});
         //filtrar por estado activo si es especifico
         if (!producto) {
             return res.status(404).json({
@@ -139,7 +148,6 @@ const getProductoById = async (req, res) => {
             });
         }
 
-    
 
         //Respuesta exitosa
         res.json({
@@ -148,6 +156,7 @@ const getProductoById = async (req, res) => {
                 producto
             }
         });
+        
 
     } catch (error) {
         console.error('error en getProductoById:', error);
@@ -463,7 +472,6 @@ const actualizarProducto = async (req, res) => {
  * activar/desactivar producto
  * PATCH /api/admin/productos/:id/estado
  *
- * 
  * @param {Object} req request express
  * @param {Object} res response express
  */
@@ -608,6 +616,7 @@ const actualizarStock = async (req, res) => {
                             message: `No hay suficiente stock. stock actual: ${producto.stock}`
                         });
                     }
+                
 
                     nuevoStock = producto.reducirStock(cantidadNUm);
                     break;
@@ -620,10 +629,10 @@ const actualizarStock = async (req, res) => {
                                 message: 'operacion invalida. debe ser aumentar, reducir o establecer'
                             });
                         
-
+                        }
                 producto.stock = nuevoStock;
                 await Producto.save();
-
+            
                 res.json({
                     success: true,
                     message: `Stock ${operacion === 'aumentar' ? 'aumentado' : operacion === 'reducir' ? 'reducido' : 'establecido'} exitosamente`,
@@ -634,9 +643,9 @@ const actualizarStock = async (req, res) => {
                         stockNuevo: producto.stock
                     }
                 });
+}
 
-        }
-    }catch (error){
+    } catch (error){
         console.error('error en actualizarStock:', error);
         res.status(500).json({
             success: false,
@@ -644,8 +653,6 @@ const actualizarStock = async (req, res) => {
             error: error.message
         });
     }
-}
-
 
 
 //exportar todos los controladores

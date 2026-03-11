@@ -13,7 +13,6 @@ const Producto = require('../models/Producto');
 const Usuario = require('../models/Usuario');
 const Categoria = require('../models/Categoria');
 const Subcategoria = require('../models/subcategoria');
-const Pedido = require('../models/pedido');
 
 /**
  * Crear pedido desde el carrito (checkout)
@@ -57,13 +56,13 @@ const crearPedido = async (req, res) => {
             await t.rollback();
             return res.status(400).json({
                 success: false,
-                message:  `metodo de pago invalido, opciones: ${metodosValidos,join(',')}`
+                message:  `metodo de pago invalido, opciones: ${metodosValidos.join(',')}`
             });
         }
 
         // obtener items del carrito
 
-        const carritoItems = await Carrito.findAll({
+        const itemsCarrito = await Carrito.findAll({
             where: {
                 usuarioId: req.user.usuarioId
             },
@@ -96,21 +95,17 @@ const crearPedido = async (req, res) => {
                 continue;
             }
 
-            //verificar stock suficiente 
+            //verificar stock suficiente
             if (item.cantidad > producto.stock){
                 erroresValidacion.push (`
                     ${producto.nombre} stock insuficiente (disponible: ${producto.stock}, solicitado: ${item.cantidad})`
-                
                 );
                 continue;
-
             }
-
-        }
 
             //Calcular total
             totalPedido += parseFloat (item.precioUnitario) * item.cantidad;
-        
+        }
 
         // su hay errores de validacion retornar
         if (erroresValidacion.length > 0){
@@ -124,7 +119,7 @@ const crearPedido = async (req, res) => {
 
         //crear pedido
         const pedido = await Pedido.create({
-            usuarioId: req.user.usuarioId,
+            usuarioId: req.usuarioId,
             total: totalPedido,
             estado: 'pendiente',
             direccionEnvio,
@@ -138,6 +133,7 @@ const crearPedido = async (req, res) => {
         // crear detalle del pedido y actualizar stock
 
         const detallesPedido = [] ;
+
         for (const item of itemsCarrito) {
         const producto = item.producto;
 
@@ -166,8 +162,8 @@ const crearPedido = async (req, res) => {
         });
 
         //confirmar transaccion
-        await t.commit() ;
-
+        await t.commit();
+    
         //cargar pedido con relaciones
         await pedido.reload ({
             include: [
@@ -374,7 +370,7 @@ const cancelarPedido = async (req , res ) => {
     try {
         const {id} = req.params;
 
-        //Buscar pedid0 solo los propios
+        //Buscar pedido solo los propios
         const pedido = await Pedido.findOne({
             where: {
                 id,
@@ -537,7 +533,7 @@ const actualizarEstadoPedido = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'Pedido no encontrado'
-            });
+            })
         }
 
         //Actualizar estados
@@ -604,7 +600,7 @@ const getEstadisticasPedidos = async (req, res) => {
 
         const pedidosHoy = await Pedido.count({
             where: {
-                createAt: {[op.gte]: hoy} //Pedidos ultimos 7 dias
+                createAt: {[Op.gte]: hoy} //Pedidos ultimos 7 dias
             }
         });
 

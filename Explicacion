@@ -1,0 +1,36 @@
+/**createdatabase.js -
+    Se ejecuta una vez y crea la base de datos
+    Importa la conexion directa con la base de datos mysql a travez de xampp
+    Tambien ejeuta las variables de entorno de .env
+    19 - 27 llama y ejeuta las variabes de entorno para verificar que los datos esten correctos
+    //console.log son mensajes que salen en la consola//
+    38 - 45 maneja los errores que puedan surgir durante la conexion o creacion de la base de datos, dando sugerencias para solucionarlos
+*/
+
+/**
+ * MODELOS:
+ * son las representaciones de las tablas de la base de datos en el codigo, cada modelo corresponde a una tabla
+ * cada modelo define los campos de la tabla, sus tipos de datos, relaciones con otras tablas, etc
+ * los modelos se definen usando Sequelize y se sincronizan con la base de datos para crear las tablas automaticamente
+ */
+
+/** jwt.js -
+ * Contiene funciones para generar y verificar tokens JWT, que se usan para autenticar a los usuarios en la aplicacion
+ * Los jwt se usan para autenticar usuarios sin necesidad de sesiones
+ * Genera un token unico para cada usuario al iniciar sesion, que incluye su id, email y rol
+ * Codifica y decodifica la clave secreta para asegurar que el token no pueda ser falsificado
+ */
+
+/** multer.js -
+ * Configura como y donde se guardan las imagenes que los usuarios suben a la aplicacion
+ * Manejar los archivos
+ */
+
+/** producto.controller.js
+ * *CODIGO CAMBIADO*
+ */
+
+/**pedido.controller.jd
+ * VERIFICAR
+ */
+
