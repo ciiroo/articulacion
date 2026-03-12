@@ -8,8 +8,6 @@ const { DataTypes } = require('sequelize');
 
 //importar instancia de sequelize
 const { sequelize } = require('../config/database');
-const { table } = require('console');
-const { type } = require('os');
 
 /**
  * definir el modelo de producto
@@ -32,8 +30,8 @@ const Producto = sequelize.define('Producto', {
                 msg: 'El nombre del producto no puede estar vacio'
             },
             len:{
-                args: [2,200],
-                msg: 'el nombre debe tener entre 2 y 200 caracteres'
+                args: [3,200],
+                msg: 'el nombre debe tener entre 3 y 200 caracteres'
             }
         }
     },
@@ -48,7 +46,7 @@ const Producto = sequelize.define('Producto', {
 
     //Precio del producto
     precio:{
-        type: DataTypes.DECIMAL(10,2), //hasta 99,999,
+        type: DataTypes.DECIMAL(10,2), //hasta 99,999,999.99
         allowNull: false,
         validate: {
             isDecimal: {
@@ -85,12 +83,11 @@ const Producto = sequelize.define('Producto', {
      */
     imagen: {
         type: DataTypes.STRING(255),
-        allowNull: true,
+        allowNull: true, //la imagen puede ser opcional
         validate: {
             is: {
                 args: /\.(jpg|jpeg|png|gif)$/i,
                 msg: 'La imagen debe ser un archivo JPG, JPEG, PNG o GIF'
-
             }
         }
     },
@@ -178,21 +175,21 @@ const Producto = sequelize.define('Producto', {
          * valida que la subcategoria y que la categoria padre esten activas
          */
         beforeCreate: async (producto) => {
-            const categoria = require('./Categoria');
+            const Categoria = require('./Categoria');
             const subcategoria = require('./subcategoria');
 
             //Buscar subcategoria padre
-            const subcategoria = await subcategoria.findByPk(producto.subcategoriaId);
-            if (!subcategoria) {
+            const Subcategoria = await subcategoria.findByPk(producto.subcategoriaId);
+            if (!Subcategoria) {
                 throw new Error('la subcategoria seleccionada no existe');
             }
 
-            if (!subcategoria.activo) {
+            if (!Subcategoria.activo) {
                 throw new Error('no se puede crear un producto en una categoria inactiva');
             }
 
             //Buscar categoria padre
-            const categoria = await categoria.findByPk(producto.categoriaId);
+            const categoria = await Categoria.findByPk(producto.categoriaId);
             if (!categoria) {
                 throw new Error('la categoria seleccionada no existe');
             }
@@ -202,7 +199,7 @@ const Producto = sequelize.define('Producto', {
             }
 
             //Validar que la subcategoria pretenezca a una categoria
-            if (subcategoria.categoriaId !==producto.categoriaId) {
+            if (Subcategoria.categoriaId !==producto.categoriaId) {
                 throw new Error ('La subcategoria no perteece a la categoria seleccionada');
             }
         },
@@ -214,9 +211,9 @@ const Producto = sequelize.define('Producto', {
 
         beforeDestroy: async (producto) => {
             if (producto.imagen) {
-                const {deletefile} = require('../config/multer');
+                const {deleteFile} = require('../config/multer');
                 //Intenta eliminar la imagen del servidor
-                const eliminado = await require('../config/multer');
+                const eliminado = await deleteFile(producto.imagen);
                 if (eliminado) {
                     console.log (`imagen eliminada: ${producto.imagen}`);
                 }
@@ -226,12 +223,26 @@ const Producto = sequelize.define('Producto', {
 });
 
 /**
+ * Metodo para obtener la url completa
+ * @returns {string|null} url de la imagen
+ */
+
+Producto.prototype.getImagenUrl = function() {
+    if(!this.imagen) {
+        return null;
+    }
+
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5000';
+    return `${baseUrl}/iploads/${this.imagen}`;
+};
+
+/**
  * metodo para verificar si hay stock disponible
  *
  * @param {number} cantidad - cantidad deseada
  * @returns {boolean} - true si hay stock suficiente false si no
  */
-producto.producto.hayStock = function(cantidad = 3) {
+Producto.prototype.hayStock = function(cantidad = 3) {
     return this.stock >= cantidad;
 };
 
@@ -249,6 +260,18 @@ Producto.prototype.reducirStock = async function (cantidad) {
     this.stock -= cantidad;
     return await this.save();
 
+};
+
+/**
+ * metodo para aumentar el stock
+ * util al recibir una venta o al actualizar invantario
+ * @param {numbrer} - cantidad a aumentar
+ * @returns {Promise<Producto>} producto actualizado
+ */
+
+Producto.prototype.aumentarStock = async function (cantidad) {
+    this.stock += cantidad;
+    return await this.save();
 }
 
 //exportar modelo producto

@@ -25,7 +25,6 @@ require('dotenv').config();
 
 
 
-
 //importar configuracion de la base de datos
 const dbConfig = require('./config/database');
 
@@ -51,9 +50,10 @@ const PORT = process.env.PORT || 5000;
 //configura que los dominios puedan hacer peticiones al backend
 
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',//url del front end
     credentials: true, // permite enviar cookies y credenciales en las solicitudes
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // métodos HTTP permitidos
+    allowedHeaders: ['Content-Type', 'Authorization'] //Headers permitidos
 }));
 
 

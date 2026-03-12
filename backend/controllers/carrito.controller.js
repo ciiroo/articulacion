@@ -44,9 +44,9 @@ const getCarrito = async (req, res) => {
         });
 
         //Calcular el total del carrito
-        let totalCarrito = 0;
+        let total = 0;
         itemsCarrito.forEach (item => {
-            total =+ parseFloat(item.precioUnitario) * item.cantidad;
+            total += parseFloat(item.precioUnitario) * item.cantidad;
         });
 
         //Respuesta exitosa
@@ -56,8 +56,8 @@ const getCarrito = async (req, res) => {
                 items: itemsCarrito,
                 resumen: {
                     totalItems: itemsCarrito.length,
-                    cantidadTotal: itemsCarrito.resuce((sum, item) => sim + item.cantidad, 0),
-                    totalCarrito: total.toFixed(2)
+                    cantidadTotal: itemsCarrito.resuce((sum, item) => sum + item.cantidad, 0),
+                    total: total.toFixed(2)
                 }
             }
         });

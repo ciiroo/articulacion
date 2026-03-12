@@ -188,7 +188,7 @@ const Pedido = sequelize.define('Pedido', {
              *verifica que este activo y tenga stock suficiente para agregarlo al carrito
              */
 
-             /**beforeCreate: async (itemCatrrito, options) => {
+            /**beforeCreate: async (itemCatrrito, options) => {
                 const Categoria = require('./Producto');
 
                 //buscar producto
@@ -210,9 +210,9 @@ const Pedido = sequelize.define('Pedido', {
                 //Guardar el precio actual del producto
                 itemCarrito.precioUnitario = producto.precio;
 
-             },
+            },
 
-              /**
+            /**
              *afterUpdate. se ejecuta despues de actualizar un pedido
              *actualiza las fechas segun el estado
              */
@@ -314,18 +314,15 @@ Pedido.prototype.cancelar = async function(nuevaCantidad) {
     //Cambiar estado a cancelado
         this.estado = 'Cancelado';
         return await this.save();
-
-
-
-
-    this.cantidad = nuevaCantidad;
-    return await this.save(); 
-
 };
 
+    this.cantidad = nuevaCantidad;
+    return await this.save();
+
+
 /**
- * Metodo para obtener detalles del pedido con productos 
- * @returns {Promise<Array>} - Detalles del pedido 
+ * Metodo para obtener detalles del pedido con productos
+ * @returns {Promise<Array>} - Detalles del pedido
  */
 Pedido.prototype.obtenerDetalles = async function () {
     const DetallePedido = require('./DetallePedido');
@@ -368,7 +365,7 @@ Pedido.obtenerPorEstado = async function (estado) {
 /**
  * Metodo para obtener historial de pedidos de un usuario
  * @param {number} usuarioId - ID del usuario
- * @returns {Promise<Array>} - Pedidos del usuario 
+ * @returns {Promise<Array>} - Pedidos del usuario
  */
 
 Pedido.obtenerHistorialUsuario = async function(usuarioId) {

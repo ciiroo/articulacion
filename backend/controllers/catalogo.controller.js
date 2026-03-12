@@ -52,7 +52,7 @@ const getProductos = async (req, res) => {
         subcategoriaId;
         
 
-        // Busqueda de texto 
+        // Busqueda de texto
         if (buscar) {
             where [Op.or] = [
                 {nombre : { [Op.like]: `%${buscar}%`}},
@@ -146,7 +146,7 @@ const getProductos = async (req, res) => {
 /**
  * obtener todas los productos por id
  * GET /api/admin/productos/:id
- * 
+ *
  * @param {Object} req request Express
  * @param {Object} res response Express
  */
@@ -195,11 +195,11 @@ const getProductosById = async (req, res) => {
 
     } catch (error) {
         console.error('Error en getProductoById: ', error);
-        res.status(500).json[{
+        res.status(500).json({
             success: false,
             message: 'Error al obtener producto',
             error: error.message
-        }]
+        })
     }
 };
 
@@ -238,7 +238,7 @@ const getCategorias = async (req, res) => {
             });
             return {
                 ...categoria.toJSON(),
-                totalproductos
+                totalProductos
             };
 
 
@@ -319,7 +319,7 @@ const getSubcategoriasporcategorias = async (req, res) => {
             });
             return {
                 ...subcategoria.toJSON(),
-                totalproductos
+                totalProductos
             };
 
 

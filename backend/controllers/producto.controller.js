@@ -54,7 +54,7 @@ const getProductos = async (req, res) => {
             //Op.or busca por nombre o descripcion
             //Op.like equivale a un like en sql con comodines para buscar considencias parciales
             where[Op.or] = [
-                {nombre: { [Op.like]: `%${buscar}%` }}, //filtra de manea automatica mientras uno va buscando x producto
+                {nombre: { [Op.like]: `%${buscar}%` }}, //filtra de manera automatica mientras uno va buscando x producto
                 {descripcion: { [Op.like]: `%${buscar}%`}}
             ];
         }
@@ -549,9 +549,6 @@ const eliminarProducto = async (req, res) => {
             message: 'Producto eliminado exitosamente'
         });
 
-
-
-            
     }catch (error) {
         console.error('error en eliminar Producto:', error);
         res.status(500).json({
@@ -562,7 +559,6 @@ const eliminarProducto = async (req, res) => {
 };
 };
 
-
 /**
  * Actualizar stock de un producto
  *
@@ -572,7 +568,6 @@ const eliminarProducto = async (req, res) => {
  * @param {Object} req request express
  * @param {Object} res response express
  */
-
 
 const actualizarStock = async (req, res) => {
     try{
@@ -643,7 +638,7 @@ const actualizarStock = async (req, res) => {
                         stockNuevo: producto.stock
                     }
                 });
-}
+
 
     } catch (error){
         console.error('error en actualizarStock:', error);
@@ -653,7 +648,7 @@ const actualizarStock = async (req, res) => {
             error: error.message
         });
     }
-
+};
 
 //exportar todos los controladores
 module.exports = {

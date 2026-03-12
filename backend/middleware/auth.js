@@ -5,11 +5,11 @@
  */
 
 //importar funciones de JWT
-const jwt  = { verifyToken, extractToken } = require('../config/jwt');
+const jwt = { verifyToken, extractToken } = require('../config/jwt');
 
 const { extractToken } = require('../config/jwt');
-const Usuario = require('../models/Usuario');
 //importar modelo de usuario
+
 const Usuario = require('../models/Usuario');
 
 //middleware de autenticacion
@@ -38,7 +38,7 @@ const verificarAuth = async ( req, res, next ) => {
         //Paso 2 verificar que el token es valido
         let decoded; //Funcion para decodificar el token
         try {
-            decoded = verificarAuth(token);
+            decoded = verifyToken(token);
         } catch (error)  {
             return res.status(401).json({
                 success: false,
@@ -117,10 +117,9 @@ const verificarAuthOpcional = async ( req, res, next ) => {
             } else {
                 req.usuario = null;
             }
-        } catch (error) {
+        }catch (error) {
             //Token invalido o expirado continuar sin usuario
             req.usuario = null;
-
         }
 
         next();

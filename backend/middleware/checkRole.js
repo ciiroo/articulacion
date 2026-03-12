@@ -226,6 +226,7 @@ module.exports = {
     esCliente,
     esPropioUsuarioOAdmin,
     esAdminOAuxiliar,
+    tieneRol,
     soloAdministrador
 };
 
