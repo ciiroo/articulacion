@@ -14,7 +14,7 @@ const { type } = require('os');
 /**
  * definir modelo subcategoria
  */
-const subcategoria = sequelize.define('Categoria', {
+const subcategoria = sequelize.define('Subcategoria', {
     //campos de la tabla
     //id identificador unico (primary key)
     id: {
@@ -119,7 +119,7 @@ const subcategoria = sequelize.define('Categoria', {
                 throw new Error('la categoria seleccionada no existe');
             }
 
-            if (!categoria.activo) {
+            if (!Categoria.activo) {
                 throw new Error('no se puede crear una subcategoria en una categoria inactiva');
             }
         },
@@ -134,11 +134,11 @@ const subcategoria = sequelize.define('Categoria', {
                 console.log(`desactivando categoria: ${subcategoria.nombre}`);
 
                 //importar modelos (aqui para evitar dependencias circulares
-                const producto = require('./Producto');
+                const Producto = require('./Producto');
 
                 try {
                     //paso 1 : desactivar los productos de esta subcategoria
-                    const productos = await productos.findAll({
+                    const productos = await Producto.findAll({
                         where: { subcategoriaId: subcategoria.id }
                     });
 

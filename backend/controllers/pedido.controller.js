@@ -466,7 +466,7 @@ const getAllPedidos = async (req, res) => {
                 attributes: ['id', 'nombre', 'email']
             },
             {model: DetallePedido,
-                as: 'detalles',
+                as: 'detalle_pedidos',
                 include: [{
                     model: Producto,
                     as: 'producto',

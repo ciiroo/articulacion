@@ -16,7 +16,7 @@ const { parse } = require('path');
 /**
  * definir modelo detalle de pedido
  */
-const detallePedido = sequelize.define('detallePedido', {
+const DetallePedido = sequelize.define('DetallePedido', {
     //campos de la tabla 
     //id identificador unico (primary key)
     id: {
@@ -31,11 +31,11 @@ const detallePedido = sequelize.define('detallePedido', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'pedidos',
+            model: 'pedidos', // nombre correcto de la tabla pedidos
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'CASCADE', //si se elimina el pedido se elimina los detalles
+        onDelete: 'CASCADE',
         validate: {
             notNull: {
                 msg: 'debe epecificar un pedido'
@@ -48,11 +48,11 @@ const detallePedido = sequelize.define('detallePedido', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'productos',
+            model: 'productos', // nombre correcto de la tabla productos
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT', //no se puede eliminar productos con pedidos  
+        onDelete: 'RESTRICT',
         validate: {
             notNull: {
                 msg: 'debe epecificar un producto'
@@ -112,17 +112,13 @@ const detallePedido = sequelize.define('detallePedido', {
     }
 }, {
     //opciones del modelo 
-
     tableName: 'detalle_pedidos',
-    timeStamps: false, //no necesita createdAt/updatedAt
-    //indiced para mejorar las busquedas
+    timestamps: false, // corregido: debe ser 'timestamps'
     indexes: [
         {
-            //indice para buscar detalles por pedido
             fields: ['pedidoId']
         },
         {
-            //indice para buscar detalles por producto
             fields: ['productoId']
         },
     ],
@@ -159,7 +155,7 @@ const detallePedido = sequelize.define('detallePedido', {
  * 
  * @returns {number} - subtotal calcaulado
  */
-detallePedido.prototype.calcularSubtotal = function() {
+DetallePedido.prototype.calcularSubtotal = function() {
     return parseFloat(this.precioUnitario) * this.cantidad;
 };
 
@@ -170,7 +166,7 @@ detallePedido.prototype.calcularSubtotal = function() {
  * @param {Array} itemsCarrito - items del carrito
  * @returns {Promise<Array>} detalles del pedido creados
 */
-detallePedido.crearDesdeCarrito = async function(pedidoId, itemsCarrito) {
+DetallePedido.crearDesdeCarrito = async function(pedidoId, itemsCarrito) {
     const detalles = [];
 
     for (const item of itemsCarrito) {
@@ -191,7 +187,7 @@ detallePedido.crearDesdeCarrito = async function(pedidoId, itemsCarrito) {
  * @param {number} pedidoId - ID del pedido
  * @returns {Promise<number>} - total calculado
  */
-detallePedido.calcularTotalPedido = async function(pedidoId) {
+DetallePedido.calcularTotalPedido = async function(pedidoId) {
     const detalles = await this.findAll({
         where: {pedidoId},
     });
@@ -208,7 +204,7 @@ detallePedido.calcularTotalPedido = async function(pedidoId) {
  * @param {number} limite - numero de productos a retornar
  * @returns {promise<Array>} productos mas vendidos
  */
-detallePedido.obtenerMasVendidos = async function(limite = 10) {
+DetallePedido.obtenerMasVendidos = async function(limite = 10) {
     const { sequelize } = require('../config/database');
 
     return await this.findAll({
@@ -223,4 +219,4 @@ detallePedido.obtenerMasVendidos = async function(limite = 10) {
 };
 
 //exportar modelo 
-module.exports = detallePedido;
+module.exports = DetallePedido;

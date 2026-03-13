@@ -28,7 +28,8 @@ const Producto = require('../models/Producto');
 
 const getProductos = async (req, res) => {
     try {
-        const {categoriaId,
+        const {
+            categoriaId,
             subcategoriaId,
             buscar,
             precioMin,
@@ -36,87 +37,75 @@ const getProductos = async (req, res) => {
             orden = 'reciente',
             pagina = 1,
             limite = 12
-            } = req.query;
+        } = req.query;
 
-            const { Op } = require ('sequelize');
+        const { Op } = require('sequelize');
 
-            //filtros base solo para productos activos y con stock
+        // Filtros base: solo productos activos y con stock
         const where = {
-            activo : true,
-            stock : {[Op.gt]: 0}
+            activo: true,
+            stock: { [Op.gt]: 0 }
         };
 
-        //filtros opcionales
+        // Filtros opcionales
         if (categoriaId) where.categoriaId = categoriaId;
-        if (subcategoriaId) where.subcategoriaId =
-        subcategoriaId;
-        
+        if (subcategoriaId) where.subcategoriaId = subcategoriaId;
 
-        // Busqueda de texto
+        // Búsqueda de texto
         if (buscar) {
-            where [Op.or] = [
-                {nombre : { [Op.like]: `%${buscar}%`}},
-                { descripcion: { [Op.like]: `%${buscar}%`} }, //permite buscar por nombre o descripcion
+            where[Op.or] = [
+                { nombre: { [Op.like]: `%${buscar}%` } },
+                { descripcion: { [Op.like]: `%${buscar}%` } }
             ];
         }
 
-        // filtro por rango de precio
-        if (precioMin && precioMax) {
+        // Filtro por rango de precio
+        if (precioMin || precioMax) {
             where.precio = {};
-            if (precioMin) where.precio [Op.gte] =
-            parseFloat(precioMin);
-            if (precioMax) where.precio [Op.gte] =
-            parseFloat(precioMax);
+            if (precioMin) where.precio[Op.gte] = parseFloat(precioMin);
+            if (precioMax) where.precio[Op.lte] = parseFloat(precioMax);
         }
 
-        //Ordenamiento
-        let order;
-        switch (order) {
-            case 'precio_asc' :
+        // Ordenamiento
+        let order = [];
+        switch (orden) {
+            case 'precio_asc':
                 order = [['precio', 'ASC']];
                 break;
-            case 'precio_desc' :
+            case 'precio_desc':
                 order = [['precio', 'DESC']];
                 break;
-            case 'nombre' :
+            case 'nombre':
                 order = [['nombre', 'ASC']];
                 break;
-            case 'reciente' :
+            case 'reciente':
+            default:
                 order = [['createdAt', 'DESC']];
                 break;
         }
 
+        // Paginación
+        const offset = (parseInt(pagina) - 1) * parseInt(limite);
 
-        //paginacion
-        const offset = (parseInt(pagina) -1) * parseInt(limite);
-
-
-
-
-        //consultar productos
-
-        const opciones = { count, rows: productos } = await
-        ProductofindAndCountAll({
+        // Consultar productos
+        const { count, rows: productos } = await Producto.findAndCountAll({
             where,
             include: [
                 {
                     model: Categoria,
                     as: 'categoria',
-                    attributes: ['id', 'nombre'],
-                
+                    attributes: ['id', 'nombre']
                 },
-            
                 {
                     model: Subcategoria,
                     as: 'subcategoria',
                     attributes: ['id', 'nombre'],
-                    where : { activo: true}
-                },
+                    where: { activo: true }
+                }
             ],
             limit: parseInt(limite),
             offset,
-            order: [['nombre', 'ASC']]
-        
+            order
         });
 
 

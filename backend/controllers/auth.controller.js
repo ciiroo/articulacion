@@ -8,7 +8,7 @@
  * Importar modelos
  */
 const Usuario = require ('../models/Usuario');
-const { generarToken } = require ('../config/jwt');
+const { generateTokens } = require ('../config/jwt');
 
 
 /**
@@ -23,7 +23,7 @@ const { generarToken } = require ('../config/jwt');
 
 const registrar = async (req, res) => {
     try {
-        const { nombre, apellido, email, password, telefono, direccion } = req.query;
+        const { nombre, apellido, email, password, telefono, direccion } = req.body;
 
         // validacion 1 verificar que todos los campos requeridos esten presentes
         if (!nombre || !apellido ||!email || !password ) {
@@ -82,7 +82,7 @@ const registrar = async (req, res) => {
         });
 
         // generar Token JWT con datos del usuario
-        const token = generarToken ({
+        const token = generateTokens ({
             id: nuevoUsuario.id,
             email: nuevoUsuario.email,
             rol: nuevoUsuario.rol
@@ -169,14 +169,14 @@ const login = async (req , res) => {
         }
 
         // Generar token JWT con datos basicos del usuario
-        const token = generateToken({
+        const token = generateTokens({
             id: usuario.id,
             email: usuario.email,
             rol: usuario.rol
         });
 
         // preparar respuesta sin password
-        const usuarioSinPassword = usuario.toJson ();
+        const usuarioSinPassword = usuario.toJSON();
         delete usuarioSinPassword.password;
 
         //respuesta exitosa
@@ -223,7 +223,7 @@ const getMe = async (req, res) => {
 
         // Respuesta exitosa
         res.json ({
-            succes: true,
+            success: true,
             data: {
                 usuario
             }
@@ -248,7 +248,8 @@ const getMe = async (req, res) => {
  * @param {Object} res response Express
  */
 
-const uptadeMe = async (req, res) => {
+const updateMe = async (req, res) => {
+    // Renombrado correctamente a updateMe
     try {
         const { nombre, apellido, telefono, direccion} = req.body;
 
@@ -276,20 +277,20 @@ const uptadeMe = async (req, res) => {
 
         //Respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             message: 'Perfil actualizado exitosamente',
             data: {
-                usuario: usuario.toJson()
+                usuario: usuario.toJSON()
             }
         });
 
     } catch (error) {
         console.error('Error en updateMe', error);
-            return res.status(500).json ({
-                succes: false,
-                message: 'Error al actualizar perfil',
-                errors: error.message
-            });
+        return res.status(500).json ({
+            success: false,
+            message: 'Error al actualizar perfil',
+            errors: error.message
+        });
         }
     };
 
@@ -313,10 +314,16 @@ const uptadeMe = async (req, res) => {
             }
 
             // validacion 2 verificar la longitud de ambas contraseñas
-            if (!passwordActual.length < 6 ) {
+            if (passwordActual.length < 6 ) {
                 return res.status(400).json ({
                     success: false,
                     message: 'La contraseña actual debe tener minimo 6 caracteres '
+                });
+            }
+            if (passwordNueva.length < 6 ) {
+                return res.status(400).json ({
+                    success: false,
+                    message: 'La nueva contraseña debe tener minimo 6 caracteres '
                 });
             }
 
@@ -330,6 +337,12 @@ const uptadeMe = async (req, res) => {
             }
 
             // validacion 4 verificar que la contraseña actual sea correcta
+            if (typeof usuario.compararPassword !== 'function') {
+                return res.status(500).json({
+                    success: false,
+                    message: 'Error interno: compararPassword no está definido en el modelo Usuario'
+                });
+            }
             const passwordValida = await usuario.compararPassword(passwordActual);
             if (!passwordValida) {
                 return res.status(400).json ({
@@ -365,6 +378,6 @@ module.exports = {
     registrar,
     login,
     getMe,
-    uptadeMe,
+    updateMe: updateMe,
     changePassword
 };

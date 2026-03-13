@@ -53,7 +53,7 @@ const getUsuarios = async (req, res) => {
 
         // respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             data: {
                 usuarios,
                 paginacion: {
@@ -97,7 +97,7 @@ const getUsuariosById = async (req, res) => {
 
         if (!usuario) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 message: 'Usuario no encontrado'
             });
         }
@@ -105,7 +105,7 @@ const getUsuariosById = async (req, res) => {
 
         //respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             data: {
                 usuario
             }
@@ -114,7 +114,7 @@ const getUsuariosById = async (req, res) => {
     } catch (error) {
         console.error('Error en getUsuariosById: ', error);
         res.status(500).json({
-            succes: false,
+            success: false,
             message: 'Error al obtener usuario',
             error: error.message
         })
@@ -191,7 +191,7 @@ const crearUsuario = async (req, res) => {
     }
 
     res.status(500).json({
-        succes: false,
+        success: false,
         message: 'Error al crear usuario',
         error: error.message
     })
@@ -224,7 +224,7 @@ const actualizarUsuario = async (req, res) => {
         //Validar rol si se proporciona
         if (rol && ['cliente', 'administrador'].includes(rol)) {
                 return res.status(400).json({
-                    succes: false,
+                    success: false,
                     message: 'rol invalido'
                 });
             }
@@ -245,7 +245,7 @@ const actualizarUsuario = async (req, res) => {
 
         //Respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             message: 'Usuario actualizado exitosamente',
             data: {
                 usuario: usuario.toJson()
@@ -255,7 +255,7 @@ const actualizarUsuario = async (req, res) => {
     } catch (error) {
         console.error('Error en actualizarUsuario:', error);
             return res.status(500).json ({
-                succes: false,
+                success: false,
                 message: 'Error al actualizar usuario',
                 errors: error.message
             });
@@ -280,7 +280,7 @@ const toggleUsuario = async (req, res) => {
 
         if (!usuario) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 message: 'Usuario no encontrada'
             });
         }
@@ -330,7 +330,7 @@ const eliminarUsuario = async (req, res) =>{
 
             if(!usuario) {
                 return res.status(404).json({
-                    succes: false,
+                    success: false,
                     message: 'Usuario no encontrado'
             });
         }
@@ -348,13 +348,13 @@ const eliminarUsuario = async (req, res) =>{
 
         //Respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             message: 'Usuario eliminada exitosamente'
         });
     } catch (error) {
         console.error('Error al eliminar el usuario' ,error);
         res.status(500).json({
-            succes: false,
+            success: false,
             message:'Error al eliminar el usuario',
             error: error.message
         });

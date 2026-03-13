@@ -79,7 +79,7 @@ const Usuario = sequelize.define('Usuario', {
         defaultValue: 'cliente', //por defecto es cliente
         validate: {
             isIn: {
-                agrs:[['cliente', 'auxiliar', 'administrador']],
+                args: [['cliente', 'auxiliar', 'administrador']],
                 msg: 'El rol debe ser cliente, auxiliar o administrador'
             },
         }
@@ -91,8 +91,8 @@ const Usuario = sequelize.define('Usuario', {
         allowNull: true, //OPCIONAL
         validate: {
             is: {
-                agrs: /^[0-9+\-\s()]*$/, //Solo numeros espacion guiones y parentesis
-                msg: 'El telefono solo puede ocntener numeros y caracteres validos'
+                args: /^[0-9+\-\s()]*$/, //Solo numeros espacios guiones y parentesis
+                msg: 'El telefono solo puede contener numeros y caracteres validos'
             },
         }
     },

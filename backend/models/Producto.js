@@ -100,11 +100,11 @@ const Producto = sequelize.define('Producto', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'categorias', //nombre de la tabla categoria
-            key: 'id' //camo de la tabla relacionada
+            model: 'categorias', // nombre correcto de la tabla categoria
+            key: 'id'
         },
-        onUpdate: 'CASCADE', //si se actualiza el id, actualizar aca tambien
-        onDelete: 'CASCADE', //si se elimina la categoria, eliminar esta subcategoria tambien
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
         validate: {
             notNull: {
                 msg: 'Debe seleccionar una categoria'
@@ -116,11 +116,11 @@ const Producto = sequelize.define('Producto', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'categorias', //nombre de la tabla subcategoria
-            key: 'id' //camo de la tabla relacionada
+            model: 'subcategorias', // corregido: nombre correcto de la tabla subcategoria
+            key: 'id'
         },
-        onUpdate: 'CASCADE', //si se actualiza el id, actualizar aca tambien
-        onDelete: 'CASCADE', //si se elimina la categoria, eliminar esta subcategoria tambien
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
         validate: {
             notNull: {
                 msg: 'Debe seleccionar una subcategoria'
@@ -140,28 +140,19 @@ const Producto = sequelize.define('Producto', {
 
 }, {
     //opciones del modelo
-
-    tableName: 'subcategorias',
-    timestamps: true, //crea campos createdAt y updatedAt
-
-    /**
-     * indices compuestos para optimizar busquedas
-     */
+    tableName: 'productos', // corregido: nombre correcto de la tabla
+    timestamps: true, // crea campos createdAt y updatedAt
     indexes: [
         {
-            //indice para buscar subcategorias por subcategoria
             fields: ['subcategoriaId']
         },
         {
-            //indice para buscar subcategorias por subcategoria
             fields: ['categoriaId']
         },
         {
-            //indice para buscar productos activos
-            fields: ['Activos']
+            fields: ['activo'] // corregido: campo correcto para productos activos
         },
         {
-            //indice para buscar productos por nombre
             fields: ['nombre']
         },
     ],
@@ -261,14 +252,12 @@ Producto.prototype.reducirStock = async function (cantidad) {
     return await this.save();
 
 };
-
 /**
  * metodo para aumentar el stock
  * util al recibir una venta o al actualizar invantario
  * @param {numbrer} - cantidad a aumentar
  * @returns {Promise<Producto>} producto actualizado
- */
-
+*/
 Producto.prototype.aumentarStock = async function (cantidad) {
     this.stock += cantidad;
     return await this.save();

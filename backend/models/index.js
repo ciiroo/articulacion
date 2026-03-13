@@ -31,15 +31,15 @@ const pedido = require('./pedido');
  */
 
 Categoria.hasMany(subcategoria, { foreignKey: 'categoriaId', //campo que conecta las tablas
-    as: 'subcategorias', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina categoria elimina subcategorias
-    onUptade: 'CASCADE' //Si se actualiza categoria se actualiza subcategorias
+    as: 'subcategorias',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 subcategoria.belongsTo(Categoria, { foreignKey: 'categoriaId', //campo que conecta las tablas
-    as: 'categoria', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina categoria elimina subcategorias
-    onUptade: 'CASCADE' //Si se actualiza categoria se actualiza subcategorias
+    as: 'categoria',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 /**
@@ -49,15 +49,15 @@ subcategoria.belongsTo(Categoria, { foreignKey: 'categoriaId', //campo que conec
  */
 
 Categoria.hasMany(Producto, { foreignKey: 'categoriaId', //campo que conecta las tablas
-    as: 'productos', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina categoria elimina el producto
-    onUptade: 'CASCADE' //Si se actualiza categoria se actualiza subcategorias
+    as: 'productos',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 Producto.belongsTo(Categoria, { foreignKey: 'categoriaId', //campo que conecta las tablas
-    as: 'categoria', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina categoria elimina el producto
-    onUptade: 'CASCADE' //Si se actualiza categoria se actualiza subcategorias
+    as: 'categoria',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 /**
@@ -67,15 +67,15 @@ Producto.belongsTo(Categoria, { foreignKey: 'categoriaId', //campo que conecta l
  */
 
 subcategoria.hasMany(Producto, { foreignKey: 'subcategoriaId', //campo que conecta las tablas
-    as: 'productos', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina subcategoria elimina el producto
-    onUptade: 'CASCADE' //Si se actualiza categoria se actualiza subcategorias
+    as: 'productos',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 Producto.belongsTo(subcategoria, { foreignKey: 'subcategoriaId', //campo que conecta las tablas
-    as: 'subcategoria', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina categoria elimina subcategorias
-    onUptade: 'CASCADE' //Si se actualiza subcategoria se actualiza el producto
+    as: 'subcategoria',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 /**
@@ -85,15 +85,15 @@ Producto.belongsTo(subcategoria, { foreignKey: 'subcategoriaId', //campo que con
  */
 
 Usuario.hasMany(Carrito, { foreignKey: 'usuarioId', //campo que conecta las tablas
-    as: 'carrito', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina usuario elimina carrito
-    onUptade: 'CASCADE' //Si se actualiza usuario se actualiza carrito
+    as: 'carrito',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 Carrito.belongsTo(Usuario, { foreignKey: 'usuarioId', //campo que conecta las tablas
-    as: 'usuario', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina usuario elimina carrito
-    onUptade: 'CASCADE' //Si se actualiza usuario se actualiza carrito
+    as: 'usuario',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 /**
@@ -103,15 +103,15 @@ Carrito.belongsTo(Usuario, { foreignKey: 'usuarioId', //campo que conecta las ta
  */
 
 Producto.hasMany(Carrito, { foreignKey: 'productoId', //campo que conecta las tablas
-    as: 'carrito', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina producto elimina carritos
-    onUptade: 'CASCADE' //Si se actualiza producto se actualiza carritos
+    as: 'carrito',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 Carrito.belongsTo(Producto, { foreignKey: 'productoId', //campo que conecta las tablas
-    as: 'producto', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina producto elimina carrito
-    onUptade: 'CASCADE' //Si se actualiza producto se actualiza carrito
+    as: 'producto',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 /**
@@ -121,15 +121,15 @@ Carrito.belongsTo(Producto, { foreignKey: 'productoId', //campo que conecta las 
  */
 
 Usuario.hasMany(Pedido, { foreignKey: 'pedidoId', //campo que conecta las tablas
-    as: 'pedidos', //Alias para la relacion
-    onDelete: 'RESTRICT', //si elimina usuario NO elimina el pedido
-    onUptade: 'CASCADE' //Si se actualiza usuario se actualiza pedido
+    as: 'pedidos',
+    onDelete: 'RESTRICT',
+    onUpdate: 'CASCADE'
 });
 
 pedido.belongsTo(Usuario, { foreignKey: 'usuarioId', //campo que conecta las tablas
-    as: 'usuario', //Alias para la relacion
-    onDelete: 'RESTRICT', //si elimina usuario NO elimina el pedido
-    onUptade: 'CASCADE' //Si se actualiza usuario se actualiza pedido
+    as: 'usuario',
+    onDelete: 'RESTRICT',
+    onUpdate: 'CASCADE'
 });
 
 /**
@@ -139,15 +139,15 @@ pedido.belongsTo(Usuario, { foreignKey: 'usuarioId', //campo que conecta las tab
  */
 
 pedido.hasMany(DetallePedido, { foreignKey: 'pedidoId', //campo que conecta las tablas
-    as: 'detalle_pedidos', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina pedido elimina detallepedido
-    onUptade: 'CASCADE' //Si se actualiza pedido se actualiza detallepedido
+    as: 'detalle_pedidos',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 DetallePedido.belongsTo(Pedido, { foreignKey: 'pedidoId', //campo que conecta las tablas
-    as: 'pedido', //Alias para la relacion
-    onDelete: 'CASCADE', //si elimina pedido elimina detallepedido
-    onUptade: 'CASCADE' //Si se actualiza pedido se actualiza detallepedido
+    as: 'pedido',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
 });
 
 /**
@@ -157,15 +157,15 @@ DetallePedido.belongsTo(Pedido, { foreignKey: 'pedidoId', //campo que conecta la
  */
 
 Producto.hasMany(DetallePedido, { foreignKey: 'productoId', //campo que conecta las tablas
-    as: 'detallespedidos', //Alias para la relacion
-    onDelete: 'RESTRICT', //no se puede eliminar un producto su eta en un detalle de pedido
-    onUptade: 'CASCADE' //Si se actualiza producto se actualiza detalles de pedido
+    as: 'detallespedidos',
+    onDelete: 'RESTRICT',
+    onUpdate: 'CASCADE'
 });
 
 DetallePedido.belongsTo(Producto, { foreignKey: 'productoId', //campo que conecta las tablas
-    as: 'producto', //Alias para la relacion
-    onDelete: 'RESTRICT', //no se puede eliminar un producto su eta en un detalle de pedido
-    onUptade: 'CASCADE' //Si se actualiza producto se actualiza detalles de pedido
+    as: 'producto',
+    onDelete: 'RESTRICT',
+    onUpdate: 'CASCADE'
 });
 
 /**
@@ -174,17 +174,17 @@ DetallePedido.belongsTo(Producto, { foreignKey: 'productoId', //campo que conect
  */
 
 pedido.belongsTo(Producto, {
-    through: DetallePedido, //campo que conecta las tablas
-    foreignKey: 'pedidoId', // Campo que conecta las tablas
-    otherKey: 'productoId', //
-    as: 'productos', //Alias para la relacion
+    through: DetallePedido,
+    foreignKey: 'pedidoId',
+    otherKey: 'productoId',
+    as: 'productos',
 });
 
 Producto.belongsTo(Pedido, {
-    through: DetallePedido, //campo que conecta las tablas
-    foreignKey: 'productoId', // Campo que conecta las tablas
-    otherKey: 'pedidoId', //
-    as: 'pedidos', //Alias para la relacion
+    through: DetallePedido,
+    foreignKey: 'productoId',
+    otherKey: 'pedidoId',
+    as: 'pedidos',
 });
 
 /**
@@ -204,7 +204,7 @@ module.exports = {
     subcategoria,
     Producto,
     Carrito,
-    pedido,
+    Pedido, // corregido: exportar con mayúscula
     DetallePedido,
     initAssociations
 };

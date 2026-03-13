@@ -149,7 +149,7 @@ const crearSubcategoria =async (req, res) => {
         }
 
         //Validacion 2 verificar si la categoria exista
-        const categoria = await categoria.findByPk(categoriaId);
+        const categoria = await Categoria.findByPk(categoriaId);
         if (!categoria) {
             return res.status(404).json({
                 success: false,
@@ -391,10 +391,10 @@ const eliminarSubcategoria = async (req, res) => {
                 where: {subcategoriaId: id}
             });
 
-            if (productos > 0) {
+            if (producto > 0) {
                 return res.status(400).json({
                     success: false,
-                    message: `no se puede eliminar la subcategoria porque tiene ${productos} subcategorias asociadas usa PATCH /api/admin/subcategorias/:id togle para desactivarla en lugar de eliminar `
+                    message: `no se puede eliminar la subcategoria porque tiene ${producto} productos asociados. Usa PATCH /api/admin/subcategorias/:id toggle para desactivarla en lugar de eliminar.`
                 });
             }
 

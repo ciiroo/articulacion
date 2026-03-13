@@ -35,20 +35,21 @@ const getCategorias = async (req, res) => {
         }
 
         //Incluir subcategorias si se solicita
+
         if(incluirSubcategorias === 'true') {
-            opciones.include == [{
+            opciones.include = [{
                 model: subcategoria,
                 as: 'subcategorias',
                 attributes: ['id', 'nombre','descripcion', 'activo'] // Solo campos necesarios
-            }]
-    }
+            }];
+        }
 
         //obtener categorias
-        const categorias = await Categoria.findAll (Opciones);
+        const categorias = await Categoria.findAll(opciones);
 
         //Respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             count: categorias.length,
             data: {
                 categorias
@@ -58,7 +59,7 @@ const getCategorias = async (req, res) => {
     } catch (error) {
         console.error('Error en getCategorias: ', error);
         res.status(500).json({
-            succes: false,
+            success: false,
             message: 'Error al obtener categorias',
             error: error.message
         })
@@ -95,7 +96,7 @@ const getCategoriasById = async (req, res) => {
 
         if (!categoria) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 message: 'Categoria no encontrada'
             });
         }
@@ -107,7 +108,7 @@ const getCategoriasById = async (req, res) => {
 
         //respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             data: {
                 categoria: categoriaJSON
             }
@@ -116,7 +117,7 @@ const getCategoriasById = async (req, res) => {
     } catch (error) {
         console.error('Error en getCategoriasById: ', error);
         res.status(500).json({
-            succes: false,
+            success: false,
             message: 'Error al obtener categoria',
             error: error.message
         })
@@ -179,7 +180,7 @@ const crearCategoria = async (req, res) => {
     }
     
     res.status(500).json({
-        succes: false,
+        success: false,
         message: 'Error al crear categoria',
         error: error.message
     })
@@ -217,7 +218,7 @@ const actualizarCategoria = async (req, res) => {
 
             if(categoriaConMisNombre) {
                 return res.status(400).json({
-                    succes: false,
+                    success: false,
                     message: `Ya existe una categoria con el nombre "${nombre}"`
                 });
             }
@@ -233,7 +234,7 @@ const actualizarCategoria = async (req, res) => {
 
         //Respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             message: 'Categoria actualizada exitosamente',
             data: {
                 categoria
@@ -245,14 +246,14 @@ const actualizarCategoria = async (req, res) => {
 
         if (error.name === 'SequelizeValidationError') {
             return res.status(400).json ({
-                succes: false,
+                success: false,
                 message: 'Error de validacion',
                 errors: error.errors.map(e => e. message)
             });
         }
 
         res.status(500).json({
-            succes: false,
+            success: false,
             message: 'Error al actualizar categoria',
             error: error.message
         });
@@ -277,7 +278,7 @@ const toggleCategoria = async (req, res) => {
         
         if (!categoria) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 message: 'Categoria no encontrada'
             });
         }
@@ -300,7 +301,7 @@ const toggleCategoria = async (req, res) => {
 
         //Respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             message: `Categoria ${nuevoEstado ? 'activada' : 'desactivada'} exitosamente`,
             data:{
                 categoria,
@@ -315,7 +316,7 @@ const toggleCategoria = async (req, res) => {
     } catch (error) {
         console.error('Error en toggleCategoria:', error);
         res.status(500).json({
-            succes: false,
+            success: false,
             message: 'Error al cambiar estado de la categoria',
             error: error.message
         });
@@ -338,7 +339,7 @@ const eliminarCategoria = async (req, res) =>{
 
             if(!categoria) {
                 return res.status(404).json({
-                    succes: false,
+                    success: false,
                     message: 'Categoria no encontrada'
             });
         }
@@ -350,7 +351,7 @@ const eliminarCategoria = async (req, res) =>{
 
         if(subcategorias > 0) {
             return res.status(400).json({
-                succes: false,
+                success: false,
                 message: `No se puede eliminar la categoria porque tiene ${subcategorias} asociadas usa PATCH /api/admin/categorias/:id toggle para desactivarla en lugar de eliminarla`
             });
         }
@@ -361,7 +362,7 @@ const eliminarCategoria = async (req, res) =>{
 
         if(productos > 0) {
             return res.status(400).json({
-                succes: false,
+                success: false,
                 message: `No se puede eliminar la categoria porque tiene ${productos} asociadas usa PATCH /api/admin/categorias/:id toggle para desactivarla en lugar de eliminarla`
             });
         }
@@ -371,13 +372,13 @@ const eliminarCategoria = async (req, res) =>{
         
         //Respuesta exitosa
         res.json({
-            succes: true,
+            success: true,
             message: 'Categoria eliminada exitosamente'
         });
     } catch (error) {
         console.error('Error al eliminar la categoria' ,error);
         res.status(500).json({
-            succes: false,
+            success: false,
             message:'Error al eliminar la categoria',
             error: error.message
         });
@@ -404,7 +405,7 @@ const getEstadisticasCategoria = async (req, res) =>{
 
         if (!categoria) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 message: 'Categoria no encontrada'
             });
         }

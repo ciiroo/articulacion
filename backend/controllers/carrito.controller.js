@@ -83,7 +83,7 @@ const agregarAlCarrito = async (req, res) => {
         //Validacion 1: campos requeridos
         if (!productoId) {
             return res.status(400).json({
-                succes: false,
+                success: false,
                 message: 'El productoId es requerido'
             });
         }

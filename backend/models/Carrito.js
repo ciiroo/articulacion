@@ -32,11 +32,11 @@ const Carrito = sequelize.define('Carrito', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Usuarios',
+            model: 'usuarios', // corregido: nombre correcto de la tabla usuarios
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'CASCADE', // si elimina el usuario se elimina su carrito
+        onDelete: 'CASCADE',
         validate: {
             notNull: {
                 msg: 'Debe especificar un usuario'
@@ -65,21 +65,21 @@ const Carrito = sequelize.define('Carrito', {
      *descripcion de la categoria
      */
 
-     descripcion: {
+    descripcion: {
         type: DataTypes.TEXT,
         allowNull: true, // puede ser nulo
-     },
+    },
 
      // Producto ID del Producto en el carrito carrito
     productoId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Productos',
+            model: 'productos', // corregido: nombre correcto de la tabla productos
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'CASCADE', //elimina el producto  del carrito
+        onDelete: 'CASCADE',
         validate: {
             notNull: {
                 msg: 'Debe especificar un producto'

@@ -133,10 +133,13 @@ const adminRoutes = require('./routes/admin.routes');
 app.use('/api/admin', adminRoutes);
 
 
-//Rutas del cliente
 
+
+//Rutas del cliente y catálogo público
 const clienteRoutes = require('./routes/cliente.routes');
 app.use('/api/cliente', clienteRoutes);
+app.use('/api/catalogo', clienteRoutes);
+
 
 
 //Manejo de rutas no encontradas (404)

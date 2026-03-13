@@ -15,24 +15,26 @@ const { esCliente } = require ('../middleware/checkRole');
 //importar controladores
 
 const catalogoController = require ('../controllers/catalogo.controller');
+// Rutas públicas de catálogo (ahora accesibles bajo /api/catalogo y /api/cliente)
+// GET /api/catalogo/productos
+router.get('/productos', catalogoController.getProductos);
+
+// GET /api/catalogo/productos/:id
+router.get('/productos/:id', catalogoController.getProductosById);
+
+// GET /api/catalogo/categorias
+router.get('/categorias', catalogoController.getCategorias);
+
+// GET /api/catalogo/categorias/:id/subcategorias
+router.get('/categorias/:id/subcategorias', catalogoController.getSubcategoriasporcategorias);
+
+// POST /api/catalogo/destacados
+router.post('/destacados', catalogoController.getProductosDestacados);
 const carritoController = require ('../controllers/carrito.controller');
 const pedidoController = require ('../controllers/pedido.controller');
 
-//Rutas publicas catalogo
-// get /api/catalogo/categorias
-router.get('/catalogo/productos', catalogoController.getProductos);
 
-// get /api/catalogo/productos/:id
-router.get('/catalogo/productos/:id', catalogoController.getProductosById);
-
-// get /api/admin/catalogo/categorias
-router.get('/catalogo/categorias', catalogoController.getCategorias);
-
-// get /api/catalogo/categoria/:id/subcategorias
-router.get('/catalogo/categorias/:id/subcategorias', catalogoController.getSubcategoriasporcategorias);
-
-// GET /api/catalogo/destacados
-router.post('/catalogo/destacados', catalogoController.getProductosDestacados);
+// Rutas públicas de catálogo movidas a catalogo.routes.js
 
 
 //Rutas de carrito

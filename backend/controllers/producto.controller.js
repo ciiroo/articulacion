@@ -541,7 +541,7 @@ const eliminarProducto = async (req, res) => {
         //el hook beforeDestroy se encarga de eliminar la imagen
 
         //eliminar producto
-        await Producto.destroy();
+        await Producto.destroy({ where: { id: req.params.id } });
 
         //respuesta exitosa
         res.json({

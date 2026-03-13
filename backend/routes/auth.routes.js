@@ -12,7 +12,7 @@ const {
     registrar,
     login,
     getMe,
-    uptadeMe,
+    updateMe,
     changePassword,
 } = require('../controllers/auth.controller');
 
@@ -25,7 +25,7 @@ router.post('/login', login);
 
 //Rutas protegidas
 router.get('/me', verificarAuth, getMe);
-router.put('/me', verificarAuth, uptadeMe);
+router.put('/me', verificarAuth, updateMe);
 router.put('/change-password', verificarAuth, changePassword);
 
 //Exportar router

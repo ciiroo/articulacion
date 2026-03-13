@@ -15,10 +15,10 @@ const Usuario = require('../models/Usuario');
 const verificarAuth = async ( req, res, next ) => {
     try {
         //paso 1 obtener el token del header authorization
-        const authHeader = req.header = req.headers.autorizaion;
+        const authHeader = req.headers.authorization;
 
         if (!authHeader) {
-            return res.status(401).jeson ({
+            return res.status(401).json({
                 success: false,
                 message: 'No se proporciono un token de autenticacion'
             });
@@ -66,7 +66,8 @@ const verificarAuth = async ( req, res, next ) => {
         }
 
         //paso 5 agregar el usuario al objeto req para uso posterior
-        //ahira los controlladores podems acceder a req.usuario
+        req.usuario = usuario;
+        //ahora los controladores pueden acceder a req.usuario
 
         //continua con el siguiente
         next();

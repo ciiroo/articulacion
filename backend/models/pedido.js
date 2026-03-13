@@ -33,17 +33,15 @@ const Pedido = sequelize.define('Pedido', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Usuarios',
+            model: 'usuarios', // corregido: nombre correcto de la tabla usuarios
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT', // no se puede eliminar el usuario si tiene pedidos
+        onDelete: 'RESTRICT',
         validate: {
             notNull: {
                 msg: 'Debe especificar su usuario'
-
             }
-
         }
     },
     
@@ -159,24 +157,17 @@ const Pedido = sequelize.define('Pedido', {
 }, {
     //opciones del modelo
     tableName: 'pedidos',
-    timestamp: true,
-    //indice para mejorar las busquesdas
+    timestamps: true, // corregido: debe ser 'timestamps'
     indexes: [
         {
-            //indice para buscar carrito por usuario
             fields: ['usuarioId']
         },
-
         {
-            //indice para buscar pedidos por estado
             fields: ['estado']
         },
-
         {
-            //indice para buscar pedidos por fecha
             fields: ['createdAt']
         },
-
     ],
     /**
          * Hooks Acciones automaticas
