@@ -47,7 +47,7 @@ router.put('/categorias', categoriaController.actualizarCategoria);
 router.patch('/categorias', categoriaController.toggleCategoria);
 
 // delete /api/admin/categorias
-router.get('/categorias/:id', categoriaController.eliminarCategoria);
+router.delete('/categorias/:id', categoriaController.eliminarCategoria);
 
 
 
@@ -71,7 +71,7 @@ router.put('/subcategorias', subcategoriaController.actualizarSubcategoria);
 router.patch('/subcategorias', subcategoriaController.toggleSubcategoria);
 
 // delete /api/admin/subcategorias
-router.get('/subcategorias/:id', subcategoriaController.eliminarSubcategoria);
+router.delete('/subcategorias/:id', subcategoriaController.eliminarSubcategoria);
 
 
 //Rutas de producto
@@ -79,7 +79,7 @@ router.get('/subcategorias/:id', subcategoriaController.eliminarSubcategoria);
 router.get('/productos', productoController.getProductos);
 
 // get /api/admin/productos
-router.get('/productos/:id', productoController.getProductosById);
+router.get('/productos/:id', productoController.getProductoById);
 
 // get /api/admin/productos/:id/stats
 //router.get('/productos:id/stats', productoController.getEstadisticasProducto);
@@ -94,7 +94,7 @@ router.put('/productos', productoController.actualizarProducto);
 router.patch('/productos', productoController.toggleProducto);
 
 // delete /api/admin/productos/:id
-router.get('/productos/:id', productoController.eliminarProducto);
+router.delete('/productos/:id', productoController.eliminarProducto);
 
 
 
@@ -120,7 +120,7 @@ router.put('/usuarios/:id', soloAdministrador, usuarioController.actualizarUsuar
 router.patch('/usuarios/:id/toggle', soloAdministrador, usuarioController.toggleUsuario);
 
 // delete /api/admin/usuario
-router.get('/usuarios/:id', soloAdministrador, usuarioController.eliminarUsuario);
+router.delete('/usuarios/:id', soloAdministrador, usuarioController.eliminarUsuario);
 
 
 //Rutas de pedidos
@@ -128,10 +128,10 @@ router.get('/usuarios/:id', soloAdministrador, usuarioController.eliminarUsuario
 router.get('/pedidos/estadisticas', pedidoController.getEstadisticasPedidos);
 
 // get /api/admin/pedidos
-router.get('/pedidos/:id', pedidoController.getAllPedidos);
+router.get('/pedidos', pedidoController.getAllPedidos);
 
 // get /api/admin/pedidos/:id
-router.get('/categorias:id/stats', pedidoController.getPedidoById);
+router.get('/pedidos/:id', pedidoController.getPedidoById);
 
 // PUT /api/admin/pedidos/:id/estado
 router.put('/pedidos/:id/estado', pedidoController.actualizarEstadoPedido);

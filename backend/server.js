@@ -33,6 +33,8 @@ const { initAssociations } = require('./models');
 
 //importar seeders
 const { runSeeders } = require('./seeders/adminSeeder');
+const { timeStamp } = require('console');
+const { syncDataBase, testConnection } = require('./config/database');
 
 
 //crear aplicaciones express
@@ -120,14 +122,14 @@ app.get('/health', (req, res) => {
 //incluye registro login, perfil
 
 
-const authRoutes = require('./routes/authRoutes');
+const authRoutes = require('./routes/auth.routes');
 app.use('/api/auth', authRoutes);
 
 //Rutas del administrador
 //requieren autenticacion y rol de administrador
 
 
-const adminRoutes = require('./eoutes/admin.routes');
+const adminRoutes = require('./routes/admin.routes');
 app.use('/api/admin', adminRoutes);
 
 
@@ -159,16 +161,14 @@ app.use((err, req, res, next) => {
             error: err.message
         });
     }
-});
-
-
 
 //otros errores
 
-res.status(500).json({
-    success: false,
-    message: err.message || 'Error interno del servidor',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }), // mostrar stack solo en desarrollo
+    res.status(500).json({
+        success: false,
+        message: err.message || 'Error interno del servidor',
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack }), // mostrar stack solo en desarrollo
+    });
 });
 
 
@@ -184,7 +184,7 @@ res.status(500).json({
 const startServer = async () => {
     try {
         //paso 1 probar conexion a MySQL
-        console.log('Conectado a MySQL...');
+        console.log('Conectando a MySQL...');
         const dbConnected = await testConnection();
 
         if(!dbConnected) {
@@ -202,7 +202,7 @@ const startServer = async () => {
             //en produccion debe ser false para no perder los datos
 
             const alterTables = process.env.NODE_ENV === 'development';
-            const dbSynced = await syncDatabase(false, alterTables);
+            const dbSynced = await syncDataBase(false, alterTables);
 
             if (!dbSynced) {
                 console.error('X Error al sincronizar la base de datos');

@@ -314,11 +314,10 @@ Pedido.prototype.cancelar = async function(nuevaCantidad) {
     //Cambiar estado a cancelado
         this.estado = 'Cancelado';
         return await this.save();
-};
 
     this.cantidad = nuevaCantidad;
     return await this.save();
-
+};
 
 /**
  * Metodo para obtener detalles del pedido con productos

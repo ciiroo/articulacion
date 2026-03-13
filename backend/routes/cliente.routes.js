@@ -34,9 +34,6 @@ router.get('/catalogo/categorias/:id/subcategorias', catalogoController.getSubca
 // GET /api/catalogo/destacados
 router.post('/catalogo/destacados', catalogoController.getProductosDestacados);
 
-// PUT /api/admin/categorias
-router.put('/categorias', categoriaController.actualizarCategoria);
-
 
 //Rutas de carrito
 // get /api/cliente/carrito

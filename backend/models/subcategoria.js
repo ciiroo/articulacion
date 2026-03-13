@@ -114,8 +114,8 @@ const subcategoria = sequelize.define('Categoria', {
             const categoria = require('./Categoria');
 
             //buscar categoria padre
-            const categoria = await categoria.findByPk(subcategoria.categoriaId);
-            if (!categoria) {
+            const Categoria = await categoria.findByPk(subcategoria.categoriaId);
+            if (!Categoria) {
                 throw new Error('la categoria seleccionada no existe');
             }
 
