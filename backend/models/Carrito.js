@@ -44,30 +44,15 @@ const Carrito = sequelize.define('Carrito', {
         }
     },
     
+    // Nombre y descripcion son opcionales para el carrito
     nombre: {
-        type: DataTypes.STRING(100), // tipo cadena de texto
-        allowNull: false, // no puede ser nulo
-        unique:{
-            msg: 'Ya existe una categoria con ese nombre'
-        },
-        validate: {
-            notEmpty: {
-                msg: 'El nombre de la categoria no puede estar vacio'
-            },
-            len: {
-                args: [2, 100],
-                msg: 'El nombre de la categoria debe tener entre 2 y 100 caracteres'
-            }
-        }
+        type: DataTypes.STRING(100),
+        allowNull: true
     },
-
-    /**
-     *descripcion de la categoria
-     */
 
     descripcion: {
         type: DataTypes.TEXT,
-        allowNull: true, // puede ser nulo
+        allowNull: true
     },
 
      // Producto ID del Producto en el carrito carrito

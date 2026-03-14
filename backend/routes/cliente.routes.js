@@ -39,35 +39,35 @@ const pedidoController = require ('../controllers/pedido.controller');
 
 //Rutas de carrito
 // get /api/cliente/carrito
-router.get('/cliente/carrito',verificarAuth , carritoController.getCarrito);
+router.get('/carrito', verificarAuth, carritoController.getCarrito);
 
 // POST /api/cliente/carrito
-router.post('/cliente/carrito', verificarAuth, carritoController.agregarAlCarrito);
+router.post('/carrito', verificarAuth, carritoController.agregarAlCarrito);
 
 // PUT /api/cliente/carrito/:id
-router.put('/cliente/carrito/:id', verificarAuth, carritoController.actualizarItemCarrito);
+router.put('/carrito/:id', verificarAuth, carritoController.actualizarItemCarrito);
 
 // delete /api/cliente/carrito/:id
 //Eliminar un item del carrito
-router.delete('/cliente/carrito/:id', verificarAuth, carritoController.elimintarItemCarrito);
+router.delete('/carrito/:id', verificarAuth, carritoController.elimintarItemCarrito);
 
-// delete /api/cliente/carrito/:id/vaciar carrito
-router.delete('/cliente/carrito', verificarAuth, carritoController.vaciarCarrito);
+// delete /api/cliente/carrito
+router.delete('/carrito', verificarAuth, carritoController.vaciarCarrito);
 
 
-//Rutas de  p -cliente
+//Rutas de pedidos
 
-// POST /api/admin/productos
-router.post('cliente/pedidos', verificarAuth, pedidoController.crearPedido);
+// POST /api/cliente/pedidos
+router.post('/pedidos', verificarAuth, pedidoController.crearPedido);
 
 // GET /api/cliente/pedidos
-router.put('/cliente/pedidos', verificarAuth, pedidoController.getMisPedidos);
+router.get('/pedidos', verificarAuth, pedidoController.getMisPedidos);
 
 // GET /api/cliente/pedidos/:id
-router.patch('/cliente/pedidos/:id', verificarAuth, pedidoController.getPedidoById);
+router.get('/pedidos/:id', verificarAuth, pedidoController.getPedidoById);
 
 // PUT /api/cliente/pedidos/:id/cancelar
-router.put('/cliente/pedidos/:id/cancelar', verificarAuth, pedidoController.cancelarPedido);
+router.put('/pedidos/:id/cancelar', verificarAuth, pedidoController.cancelarPedido);
 
 
 module.exports = router;

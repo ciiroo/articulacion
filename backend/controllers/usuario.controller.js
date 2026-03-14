@@ -86,10 +86,10 @@ const getUsuarios = async (req, res) => {
 
 const getUsuariosById = async (req, res) => {
     try {
-        const {id} = req.query;
+        const { id } = req.params;
 
         //Buscar usuarios
-        const usuario = await Usuario.findByPk (id, {
+        const usuario = await Usuario.findByPk(id, {
             attributes: { exclude: ['password'] },
 
         });
@@ -143,7 +143,7 @@ const crearUsuario = async (req, res) => {
 
         //Validar rol
         if (!['cliente', 'auxiliar', 'administrador'].includes(rol)) {
-            return res.status(400).json(400).json({
+            return res.status(400).json({
                 success: false,
                 message: 'Rol invalido. Debe ser: cliente, auxiliar o administrador'
             });
@@ -154,7 +154,7 @@ const crearUsuario = async (req, res) => {
         });
 
         if (usuarioExistente) {
-            returnres.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: 'El email ya esta registrado'
             });
@@ -177,7 +177,7 @@ const crearUsuario = async (req, res) => {
             success: true,
             message: 'Usuario creado exitosamente',
             data: {
-                usuario: nuevoUsuario.toJson() //convertit a json para excluir campos sensibles
+                usuario: nuevoUsuario.toJSON() //convertir a json para excluir campos sensibles
             }
         });
     } catch (error) {
@@ -222,12 +222,12 @@ const actualizarUsuario = async (req, res) => {
         }
 
         //Validar rol si se proporciona
-        if (rol && ['cliente', 'administrador'].includes(rol)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'rol invalido'
-                });
-            }
+        if (rol && !['cliente', 'auxiliar', 'administrador'].includes(rol)) {
+            return res.status(400).json({
+                success: false,
+                message: 'rol invalido'
+            });
+        }
 
         //Actualizar campos
         if (nombre !== undefined) usuario.nombre = nombre;

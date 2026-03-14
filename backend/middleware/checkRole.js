@@ -126,7 +126,7 @@ const esPropioUsuarioOAdmin = (req , res , next) => {
         }
 
         //Obtener el usuarioId de los parametros de la ruta
-        const usuarioIdParam = req.param.usuarioId || req.params.id;
+        const usuarioIdParam = req.params.usuarioId || req.params.id;
         
         // Verificar que el usuarioId coincide con el usuario autenticado
         

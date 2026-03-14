@@ -40,7 +40,7 @@ const getCarrito = async (req, res) => {
                     ]
                 }
             ],
-            order: [['createAt', 'DESC']]
+            order: [['createdAt', 'DESC']]
         });
 
         //Calcular el total del carrito
@@ -56,7 +56,7 @@ const getCarrito = async (req, res) => {
                 items: itemsCarrito,
                 resumen: {
                     totalItems: itemsCarrito.length,
-                    cantidadTotal: itemsCarrito.resuce((sum, item) => sum + item.cantidad, 0),
+                    cantidadTotal: itemsCarrito.reduce((sum, item) => sum + item.cantidad, 0),
                     total: total.toFixed(2)
                 }
             }
@@ -116,7 +116,7 @@ const agregarAlCarrito = async (req, res) => {
         //Validacion 4 verificar si ya existe en el carrito
         const itemExistente = await Carrito.findOne({
             where: {
-                usuarioId: req.id,
+                usuarioId: req.usuario.id,
                 productoId
             }
         });
@@ -171,7 +171,7 @@ const agregarAlCarrito = async (req, res) => {
         //Recargar con producto
         await nuevoItem.reload({
             include: [{
-                moder: Producto,
+                model: Producto,
                 as: 'producto',
                 attributes: ['id', 'nombre', 'precio', 'stock', 'imagen']
             }]
@@ -244,7 +244,7 @@ const actualizarItemCarrito = async (req, res) => {
 
             //actualizar cantidad
             item.cantidad = cantidadNum;
-            await itemm.save();
+            await item.save();
 
             //Respuesta exitosa
             res.json({
@@ -320,7 +320,7 @@ const vaciarCarrito = async (req, res) => {
         });
 
         res.json({
-            success: false,
+            success: true,
             message: 'Carrito vaciado',
             data: {
                 itemsEliminados

@@ -342,31 +342,32 @@ const actualizarProducto = async (req, res) => {
             });
         }
 
-         // Validar si cambia la| categoria y subcategoria
-            if (categoriaId && SubcategoriaId !== producto.categoriaId) {
+         // Validar si cambia la categoria
+        if (categoriaId && parseInt(categoriaId) !== producto.categoriaId) {
             const categoria = await Categoria.findByPk(categoriaId);
 
-            if (categoria || !categoria.activo) {
+            if (!categoria || !categoria.activo) {
                 return res.status(404).json({
                     success: false,
                     message: 'categoria invalida o inactiva'
-                })
+                });
             }
         }
 
-        if (SubcategoriaId && SubcategoriaId !== producto.SubcategoriaId) {
-            const Subcategoria = await subcategoria.findByPk(SubcategoriaId);
+        // Validar si cambia la subcategoria
+        if (SubcategoriaId && parseInt(SubcategoriaId) !== producto.SubcategoriaId) {
+            const subcategoriaObj = await subcategoria.findByPk(SubcategoriaId);
 
-            if (Subcategoria || !Subcategoria.activo) {
+            if (!subcategoriaObj || !subcategoriaObj.activo) {
                 return res.status(404).json({
                     success: false,
                     message: 'subcategoria invalida o inactiva'
-                })
+                });
             }
 
-            const catId = categoriaId || producto.categoriaId
+            const catId = categoriaId ? parseInt(categoriaId) : producto.categoriaId;
 
-            if (!Subcategoria.categoriaId !== parseInt(catId)) {
+            if (subcategoriaObj.categoriaId !== catId) {
                 return res.status(404).json({
                     success: false,
                     message: 'La subcategoria no pertenece a la categoria seleccionada'
@@ -420,7 +421,7 @@ const actualizarProducto = async (req, res) => {
         if (activo !== undefined) producto.activo = activo;
 
         //guardar cambios
-        await Producto.save();
+        await producto.save();
 
         //respuesta exitosa
         res.json({
@@ -495,8 +496,7 @@ const toggleProducto = async (req, res) => {
         producto.activo = nuevoEstado;
 
         //guardar cambios
-        await Producto.save();
-
+        await producto.save();
 
         //respuesta exitosa
         res.json({
@@ -504,7 +504,7 @@ const toggleProducto = async (req, res) => {
             message: `producto ${producto.activo ? 'activado' : 'desactivado'} exitosamente`,
             data: {
                 producto
-                }
+            }
         });
 
     } catch (error) {
@@ -626,7 +626,7 @@ const actualizarStock = async (req, res) => {
                         
                         }
                 producto.stock = nuevoStock;
-                await Producto.save();
+                await producto.save();
             
                 res.json({
                     success: true,

@@ -246,10 +246,12 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
 });
 
-// Iniciar servidor
+// Solo iniciar servidor cuando se ejecuta directamente (no cuando se importa en tests)
+if (require.main === module) {
+    startServer();
+}
 
-startServer();
-
-//exportar app para testing
+// Exportar app para testing, y exponer startServer para casos especiales
 module.exports = app;
+module.exports.startServer = startServer;
 

@@ -87,8 +87,8 @@ const DetallePedido = sequelize.define('DetallePedido', {
                 msg: 'el precio debe ser un numero decimal valido'
             },
             min: {
-                arg: [0],
-                msg: 'el precio no puede der negativo'
+                args: [0],
+                msg: 'el precio no puede ser negativo'
             }
         }
     },

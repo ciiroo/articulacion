@@ -76,13 +76,13 @@ const getCategorias = async (req, res) => {
 
 const getCategoriasById = async (req, res) => {
     try {
-        const { id} = req.query;
+        const { id } = req.params;
 
         //Buscar categorias con subcategorias y contar productos
-        const categoria = await Categoria.findByPk (id, {
+        const categoria = await Categoria.findByPk(id, {
             include: [
                 {
-                    model:subcategoria,
+                    model: subcategoria,
                     as: 'subcategorias',
                     attributes: ['id', 'nombre', 'descripcion', 'activo']
                 },
@@ -102,7 +102,7 @@ const getCategoriasById = async (req, res) => {
         }
 
         //agregar contador de productos
-        const categoriaJSON = Categoria.toJSON();
+        const categoriaJSON = categoria.toJSON();
         categoriaJSON.totalProductos = categoriaJSON.productos.length;
         delete categoriaJSON.productos; //no enviar la lista completa solo el contador
 
@@ -149,7 +149,7 @@ const crearCategoria = async (req, res) => {
         });
 
         if (categoriaExistente) {
-            returnres.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: `Ya existe una categoria con el nombre "${nombre}"`
             });
@@ -157,8 +157,8 @@ const crearCategoria = async (req, res) => {
 
         //Crear categoria
         const nuevaCategoria = await Categoria.create({
-            combre,
-            descriocion: descripcion || null, //si no se proporciona la descripcion se establece como null
+            nombre,
+            descripcion: descripcion || null, //si no se proporciona la descripcion se establece como null
             activo: true
         });
 
@@ -198,7 +198,7 @@ const crearCategoria = async (req, res) => {
 const actualizarCategoria = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, descripcion} = req.body;
+        const { nombre, descripcion, activo } = req.body;
         
         //Buscar categoria
         const categoria = await Categoria.findByPk(id);

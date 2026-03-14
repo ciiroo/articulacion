@@ -9,8 +9,6 @@ const { DataTypes } = require('sequelize');
 
 //Importar instancia de sequelize
 const {sequelize} = require('../config/database');
-const { type } = require('node:os');
-const { before } = require('node:test');
 
 
 /**
